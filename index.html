@@ -4,204 +4,696 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
 <title>Protótipo – Empréstimo com garantia de veículo (proposta de melhorias)</title>
 <style>
-:root{--blue:#0046c0;--blue-d:#00297a;--ink:#111;--muted:#555;--line:#d9dde5;--ok:#0a7a4b;--err:#c62828;--soft:#eef3fd}
+/* Fontes de licença aberta (SIL OFL 1.1), hospedadas neste repositório.
+   Open Sans = mesma família do site real. Figtree = substituta da portoRoobert (fonte licenciada da Porto, não copiada). */
+@font-face{font-family:"Titulo";src:url(fonts/figtree-latin.woff2) format("woff2");font-weight:300 900;font-display:swap}
+@font-face{font-family:"Open Sans";src:url(fonts/opensans-latin.woff2) format("woff2");font-weight:300 800;font-display:swap}
+/* Tokens copiados do CSS real (/contrate/_next/static/chunks/3niznu80umomm.css e 3youi6x3xiam1.css) */
+:root{--s900:#0046c0;--s800:#2662c9;--s500:#00a1fc;--s400:#66cafc;--s100:#d9f1ff;--n900:#2e2e2e;--n800:#434447;--n700:#6f7073;--n500:#b6b8ba;--n400:#dadbdd;--n200:#f0f0f2;--d500:#f31701;--d900:#a61606;--d100:#ffe6e6;--ok900:#10601d;--ok100:#def6e1;--w100:#fdf9e3;--w900:#8a5a00;
+--ft:"Titulo","Figtree",Arial,sans-serif;--fb:"Open Sans",Arial,sans-serif}
 *{box-sizing:border-box}
-body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:#fff}
-.proto{position:sticky;top:0;z-index:20;background:#ffcc00;color:#222;font-size:13px;font-weight:700;text-align:center;padding:7px 10px}
-.proto label{font-weight:400;margin-left:12px;cursor:pointer}
-header{display:flex;align-items:center;justify-content:center;height:58px;border-bottom:1px solid var(--line);position:relative}
-header .back{position:absolute;left:14px;background:none;border:0;font-size:22px;color:var(--blue);cursor:pointer}
-.logo{font-weight:800;font-size:24px;color:var(--blue);letter-spacing:-.5px}
-.bar{height:4px;background:#e8ecf3}.bar i{display:block;height:4px;background:var(--blue);transition:width .3s}
-.wrap{display:grid;grid-template-columns:minmax(0,520px) 300px;gap:32px;justify-content:center;padding:28px 18px 120px}
-@media(max-width:900px){.wrap{grid-template-columns:1fr}.note{order:-1}}
-.step{display:none}.step.on{display:block}
-.eyebrow{font-size:13px;color:var(--blue);font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-bottom:8px}
-h1{font-size:30px;line-height:1.15;margin:0 0 12px}h1 em{font-style:normal;color:var(--blue)}
-h2{font-size:24px;color:var(--blue);margin:0 0 10px}
-p{line-height:1.5;margin:0 0 14px}.muted{color:var(--muted);font-size:14px}
-.field{margin:0 0 16px}.field label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
-.field input,.field select{width:100%;font-size:16px;padding:13px 14px;border:1px solid #9aa3b2;border-radius:8px;background:#fff}
-.field input:focus,.field select:focus{outline:2px solid var(--blue);border-color:var(--blue)}
-.field .help{font-size:13px;color:var(--muted);margin-top:5px}
-.field.bad input{border-color:var(--err)}.field .msg{display:none;color:var(--err);font-size:13px;margin-top:5px}.field.bad .msg{display:block}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn{display:block;width:100%;border:0;border-radius:8px;background:var(--blue);color:#fff;font-weight:700;font-size:16px;padding:15px;cursor:pointer;margin-top:8px}
-.btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
-.btn.link{background:none;color:var(--blue);text-decoration:underline;font-weight:600;padding:8px}
-.check{list-style:none;padding:0;margin:0 0 18px}.check li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #eef0f4;font-size:15px}
-.check li:before{content:"✓";color:#fff;background:var(--ok);border-radius:50%;width:20px;height:20px;flex:none;display:grid;place-items:center;font-size:12px;margin-top:1px}
-.box{background:var(--soft);border-radius:10px;padding:14px 16px;margin:0 0 18px;font-size:14px}
-.box.warn{background:#fff4e5}.box.err{background:#fdecec}
-.perks{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.perks span{background:#f3f5f9;border-radius:20px;padding:6px 12px;font-size:13px}
-.note{background:#fffbe6;border:1px dashed #d9b400;border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.45;align-self:start;position:sticky;top:110px}
-.note b{display:block;margin-bottom:6px;font-size:14px}.note ul{margin:6px 0 0 18px;padding:0}.note li{margin-bottom:5px}
-.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:2px 6px;margin-right:4px}
-.t-cfg{background:#e6f5ee;color:#0a6b42}.t-tag{background:#e8eefc;color:#1d3f99}.t-dev{background:#fff1d6;color:#8a5a00}
-body.nonotes .note{display:none}body.nonotes .wrap{grid-template-columns:minmax(0,520px)}
-.sim{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
-.sim .big{font-size:28px;font-weight:800;color:var(--blue)}
-input[type=range]{width:100%;accent-color:var(--blue)}
-.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 14px}.opts button{padding:10px 0;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:600;cursor:pointer}.opts button.sel{border-color:var(--blue);background:var(--soft);color:var(--blue)}
-.sum div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eef0f4;font-size:15px}
-.priv{font-size:12.5px;color:var(--muted)}
-.wa{position:fixed;right:18px;bottom:18px;width:52px;height:52px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;font-weight:800;text-decoration:none}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--fb);font-size:16px;color:var(--n900);background:#fff}
+button{font-family:inherit}
+a{color:var(--s900)}
+:not(input):not(textarea):not(select):focus-visible{outline:2px solid #f864f5;outline-offset:2px}
+
+/* ===== Faixa do protótipo (não faz parte da tela real) ===== */
+.proto{position:sticky;top:0;z-index:60;background:#ffcc00;color:#222;font:700 13px/18px var(--fb);display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:center;padding:7px 12px}
+.proto label{font-weight:400;cursor:pointer;display:inline-flex;gap:5px;align-items:center}
+.seg{display:inline-flex;border:1px solid #222;border-radius:999px;overflow:hidden;font-weight:600}
+.seg button{border:0;background:transparent;padding:3px 12px;font-size:12.5px;cursor:pointer;color:#222}
+.seg button[aria-pressed=true]{background:#222;color:#ffcc00}
+.seg[data-off=true]{opacity:.45}.seg[data-off=true] button{cursor:not-allowed}
+.proto small{font-weight:400}
+
+/* ===== Header real: grid 3 colunas, 60px, borda neutral-400 ===== */
+.hd{display:grid;grid-template-columns:repeat(3,1fr);align-items:center;height:60px;padding:0 10px;border-bottom:1px solid var(--n400);background:#fff}
+.hd .back{justify-self:start;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:0;background:none;color:var(--s900);cursor:pointer}
+.logo{grid-column:2;justify-self:center;font:700 34px/1 var(--ft);color:var(--s500);letter-spacing:-.8px}
+.pbar{height:4px;background:transparent;overflow:hidden}.pbar i{display:block;height:100%;width:0;background:var(--s900);border-radius:20px;transition:width .5s ease-in-out}
+body.no-bar .pbar{display:none}
+
+/* ===== Grid real: 12 colunas, gap 20, padding 40 (desktop) / 32 20 (celular); conteúdo na coluna 4/10 ===== */
+.main{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;padding:40px;max-width:1440px;margin:0 auto;align-items:start}
+.content{grid-column:4/10;min-width:0}
+.notes{grid-column:10/13;min-width:0}
+body.nonotes .notes{display:none}
+@media(max-width:1023px){.notes{grid-column:4/10}}
+@media(max-width:767px){.main{padding:32px 20px}.content,.notes{grid-column:1/13}}
+
+.step{display:none}.step.on{display:block;animation:fade .5s ease-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+body:not(.atual) .v-atual,body.atual .v-prop{display:none!important}
+.stack{display:flex;flex-direction:column;gap:32px}
+
+/* Tipografia real */
+.t-title{font:600 32px/36px var(--ft);color:var(--s900);margin:0;outline:none}
+.t-p{font:500 20px/24px var(--ft);color:var(--n800);margin:0}
+.eyebrow{font:600 14px/20px var(--fb);color:var(--n700);margin:0 0 -20px}
+@media(max-width:767px){.t-title{font-size:24px;line-height:28px}.t-p{font-size:18px;line-height:22px}}
+.body1{font:16px/24px var(--fb);margin:0}
+.caption{font:12px/16px var(--fb);color:var(--n700)}
+
+/* Boas-vindas real */
+.wc{display:flex;flex-direction:column;gap:48px}
+.wc-head{display:flex;flex-direction:column;gap:24px}
+.wc h1{font:700 40px/44px var(--ft);color:#000;margin:0}
+.wc h1 .hl{color:var(--s900)}
+.wc .sub{font:500 24px/28px var(--ft);color:#000;margin:0}
+.icons{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:24px}
+.icons li{display:flex;gap:16px;align-items:center;font:16px/24px var(--fb);color:#000}
+.icons svg{width:32px;height:32px;flex:none}
+.req{background:var(--n200);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.req b{font:700 16px/24px var(--fb)}
+.req ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.req li{display:flex;gap:10px;font:14px/20px var(--fb)}
+.req li svg{flex:none;width:20px;height:20px;color:var(--ok900)}
+.resume{border:1px solid var(--s900);background:var(--s100);color:var(--s900);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;font:14px/20px var(--fb)}
+.resume .row2{display:flex;gap:12px;flex-wrap:wrap}
+.resume .btn{height:44px;width:auto;padding:0 20px;font-size:14px}
+
+/* Botões reais (c-button md 52px, radius 8, Open Sans 700) */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;padding:0 40px;border:1px solid transparent;border-radius:8px;background:var(--s900);color:#fff;font:700 16px/16px var(--fb);letter-spacing:.4px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:linear-gradient(#0003,#0003),var(--s900)}
+.btn.stroke{background:transparent;border-color:var(--s900);color:var(--s900)}
+.btn.stroke:hover,.btn.ghost:hover{background:#43444714}
+.btn.ghost{background:transparent;color:var(--s900)}
+.btns{display:flex;flex-direction:column;gap:16px}
+.foot{display:flex;flex-direction:column;gap:12px}
+@media(max-width:767px){
+ .foot{position:sticky;bottom:0;z-index:20;background:#fff;margin:0 -20px;padding:24px 20px 12px}
+}
+
+/* Boas-vindas no celular: fundo seguro-900, texto branco, botão branco fixo no rodapé (mobileBg + position fixedBottom) */
+@media(max-width:767px){
+ body.bv .main{background:var(--s900);min-height:calc(100dvh - 61px);padding-bottom:120px}
+ body.bv .wc,body.bv .wc h1,body.bv .wc .sub,body.bv .icons li{color:#fff}
+ body.bv .wc-head{gap:48px}
+ body.bv .wc h1 .hl{color:var(--s100)}
+ body.bv .req{background:#ffffff14;color:#fff}body.bv .req li svg{color:var(--s100)}
+ body.bv .resume{background:#ffffff14;border-color:#ffffff52;color:#fff}
+ body.bv .resume .btn{background:#fff;color:var(--s900)}
+ body.bv .muted-w{color:#fff}
+ .fixed-bottom{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:24px 20px 12px;background:var(--s900)}
+ .fixed-bottom .btn{background:#fff;color:var(--s900)}
+}
+
+/* Campo grande real (c-input-big): linha inferior, Roobert 24px bold */
+.ib-wrap{position:relative}
+.ib{display:block;width:100%;padding:12px 32px 12px 0;font:700 24px/28px var(--ft);color:#000;border:0;border-bottom:1px solid var(--n500);background:transparent;border-radius:0;outline:none!important;transition:border-color .2s}
+.ib::placeholder{color:var(--n500);opacity:1}
+.ib:focus{border-color:var(--s400)}
+.ib-icon{position:absolute;right:0;top:14px;width:24px;height:24px;display:none}
+.bad .ib{border-color:var(--d500)!important}.bad .ib-icon.alert{display:block;color:var(--d500)}
+.okv .ib{border-color:var(--ok900)}.okv .ib-icon.check{display:block;color:var(--ok900)}
+.ib-help,.ib-err{margin-top:8px;font:14px/16px var(--fb)}
+.ib-help{color:var(--n700)}.ib-err{color:var(--d500);display:none}.bad .ib-err{display:block}
+/* Proposto: rótulo fixo acima e foco com contraste */
+.lbl{display:block;font:600 14px/20px var(--fb);color:var(--n800);margin-bottom:2px}
+.v-prop .ib:focus,.prop-field .ib:focus{border-bottom-color:var(--s900);box-shadow:0 1px 0 0 var(--s900)}
+
+/* Campo padrão real (c-input): caixa 52px, borda neutral-500, rótulo flutuante */
+.ci{width:100%}
+.ci .box{position:relative;height:52px;border:1px solid var(--n500);border-radius:6px;transition:border-color .2s;background:#fff}
+.ci input,.ci select{appearance:none;-webkit-appearance:none;width:100%;height:100%;border:0;background:transparent;padding:0 16px;font:14px/20px var(--fb);color:var(--n900);outline:none!important;border-radius:6px}
+.ci .fl{position:absolute;left:16px;top:50%;transform:translateY(-50%);font:14px/16px var(--fb);color:var(--n700);pointer-events:none;transition:all .2s}
+.ci input::placeholder{color:transparent}
+.ci:focus-within .box{border-color:var(--s400)}
+.ci:focus-within input::placeholder{color:var(--n500)}
+.ci:focus-within .fl,.ci input:not(:placeholder-shown)~.fl,.ci.sel .fl{top:8px;transform:none;font-size:10px;line-height:14px}
+.ci input:not(:placeholder-shown),.ci:focus-within input,.ci select{padding-top:14px}
+.ci .chev{position:absolute;right:14px;top:50%;width:16px;height:16px;transform:translateY(-50%);pointer-events:none;color:var(--n800)}
+.ci .help,.ci .err{margin:4px 0 0 16px;font:12px/16px var(--fb)}
+.ci .help{color:var(--n700)}.ci .err{color:var(--d500);display:none}
+.ci.bad .box{border-color:var(--d500)!important}.ci.bad .fl{color:var(--d500)}.ci.bad .err{display:block}
+/* Proposto: rótulo sempre visível, exemplo de formato visível, fonte 16px (sem zoom no iPhone), foco escuro */
+.v-prop .ci .fl,.ci.pl .fl{top:8px;transform:none;font-size:11px;line-height:14px;color:var(--n800);font-weight:600}
+.v-prop .ci input,.ci.pl input,.v-prop .ci select{padding-top:16px;font-size:16px}
+.v-prop .ci input::placeholder{color:#8a8b8e}
+.v-prop .ci:focus-within .box{border-color:var(--s900);box-shadow:0 0 0 1px var(--s900)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fields{display:flex;flex-direction:column;gap:16px}
+
+.chk{display:flex;gap:12px;align-items:flex-start;font:14px/20px var(--fb);cursor:pointer}
+.chk input{appearance:none;-webkit-appearance:none;flex:none;width:20px;height:20px;margin:0;border:2px solid var(--n800);border-radius:4px;display:grid;place-items:center;cursor:pointer}
+.chk input:checked{background:var(--s900);border-color:var(--s900)}
+.chk input:checked::after{content:"";width:10px;height:6px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.chk input:focus-visible{outline:2px solid #f864f5;outline-offset:2px}
+
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.list li{display:flex;gap:12px;align-items:flex-start;font:16px/24px var(--fb)}
+.list li svg{width:24px;height:24px;flex:none;color:var(--s900)}
+
+.notif{position:relative;border-radius:8px;padding:16px 16px 16px 52px;font:14px/20px var(--fb);border:1px solid transparent}
+.notif svg{position:absolute;left:16px;top:14px;width:24px;height:24px}
+.notif.info{background:var(--s100);border-color:var(--s900);color:var(--s900)}
+.notif.danger{background:var(--d100);border-color:var(--d500);color:var(--d900)}
+.notif.warn{background:var(--w100);border-color:#efd843;color:#5c4400}
+.notif.neutral{background:var(--n200);color:var(--n900)}
+.notif b{display:block;margin-bottom:2px}
+
+.chip-sum{display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--n200);border-radius:8px;padding:10px 14px;font:14px/20px var(--fb);color:var(--n800)}
+.chip-sum b{color:var(--s900)}
+.trust{display:flex;flex-direction:column;gap:8px;font:14px/20px var(--fb);color:var(--n800)}
+.trust div{display:flex;gap:10px;align-items:center}.trust svg{width:20px;height:20px;flex:none;color:var(--s900)}
+.privacy{font:14px/16px var(--fb);color:var(--n700);margin:0}
+.ph-legal{border:1px dashed var(--n500);border-radius:6px;padding:8px 10px;font:12px/16px var(--fb);color:var(--n700);background:#fafafa}
+
+/* Simulação */
+.sim{border:1px solid var(--n400);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px;background:#fff}
+.sim .lab{font:14px/20px var(--fb);color:var(--n700)}
+.sim .big{font:700 32px/36px var(--ft);color:var(--s900)}
+.sim input[type=range]{width:100%;accent-color:var(--s900);height:28px}
+.sim .ends{display:flex;justify-content:space-between;font:12px/16px var(--fb);color:var(--n700)}
+.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.opts button{height:48px;border:1px solid var(--n500);border-radius:8px;background:#fff;font:600 16px var(--fb);color:var(--n900);cursor:pointer}
+.opts button[aria-pressed=true]{border:2px solid var(--s900);background:var(--s100);color:var(--s900)}
+.parc{font:700 20px/24px var(--ft);color:#000}
+
+.card{border:1px solid var(--n400);background:var(--n200);border-radius:12px;padding:8px 20px}
+.card .r{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--n400);font:14px/20px var(--fb)}
+.card .r:last-child{border-bottom:0}.card .r b{text-align:right}
+
+.addr{display:flex;gap:12px;align-items:flex-start;background:var(--n200);border-radius:8px;padding:14px 16px;font:14px/20px var(--fb)}
+.addr svg{width:24px;height:24px;flex:none;color:var(--s900)}
+
+/* Resultado / proposta enviada */
+.done-ic{width:56px;height:56px;border-radius:50%;background:var(--ok100);color:var(--ok900);display:grid;place-items:center}
+.done-t{font:700 40px/44px var(--ft);color:#000;margin:0}
+.done-s{font:500 24px/28px var(--ft);color:var(--n800);margin:0}
+@media(max-width:767px){.done-t{font-size:26px;line-height:30px}.done-s{font-size:20px;line-height:24px}}
+.steps3{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;counter-reset:s}
+.steps3 li{position:relative;padding:0 0 18px 44px;font:14px/20px var(--fb);counter-increment:s}
+.steps3 li::before{content:counter(s);position:absolute;left:0;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--s900);color:#fff;font:700 14px/28px var(--fb);text-align:center}
+.steps3 li::after{content:"";position:absolute;left:13px;top:30px;bottom:2px;width:2px;background:var(--n400)}
+.steps3 li:last-child::after{display:none}
+.steps3 b{display:block;font-size:16px;line-height:24px}
+.banner{display:flex;gap:12px;align-items:flex-start;background:var(--n200);border-radius:8px;padding:16px;font:14px/20px var(--fb)}
+.banner svg{width:32px;height:32px;flex:none}
+
+/* Tela de carregamento (loadingScreen da configuração) */
+.loading{position:fixed;inset:0;z-index:70;background:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px}
+.loading.on{display:flex}.loading p{font:600 20px/24px var(--ft);color:var(--s900);margin:0}
+.loading .lp{width:min(410px,90vw);height:8px;border-radius:4px;background:var(--n200);overflow:hidden}.loading .lp i{display:block;height:100%;width:0;background:var(--s900);transition:width .12s linear}
+
+/* Botão flutuante do WhatsApp real: 56px, right 20, bottom 96, #25d366 */
+.wa{position:fixed;right:20px;bottom:96px;z-index:30;width:56px;height:56px;border-radius:50%;background:#25d366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 10px #0003;border:0;cursor:pointer;transition:transform .3s}
+.wa:hover{transform:scale(1.1)}.wa svg{width:26px;height:26px}
+body.bv .wa{display:none}
+
+/* Controles que só existem no protótipo */
+.demo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px dashed #c9a400;background:#fffbe6;border-radius:8px;padding:8px 10px;font:12px/16px var(--fb);color:#5c4400}
+.demo b{font-weight:700}
+.demo button{border:1px solid #c9a400;background:#fff;border-radius:999px;padding:4px 10px;font:600 12px/16px var(--fb);color:#5c4400;cursor:pointer}
+.demo button:hover{background:#fff3bf}
+
+/* Notas laterais */
+.note{background:#fffbe6;border:1px dashed #d9b400;border-radius:10px;padding:14px 16px;font:13.5px/1.45 var(--fb);color:#222;position:sticky;top:56px}
+.note h2{font:700 14px/1.3 var(--fb);margin:0 0 4px}
+.note .mode{font-size:12px;color:#5c4400;margin:0 0 8px}
+.note ul{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.note li{padding-left:0}
+.note .id{font-weight:700;color:#5c4400}
+.note .novo{display:inline-block;font:700 10px/1 var(--fb);background:#222;color:#ffcc00;border-radius:3px;padding:2px 4px;margin-left:4px;vertical-align:1px}
+.tag{display:inline-block;font:700 11px/1.2 var(--fb);border-radius:4px;padding:2px 6px;margin-right:5px;vertical-align:1px}
+.t-cfg{background:#e6f5ee;color:#0a6b42}.t-tag{background:#e8eefc;color:#1d3f99}.t-dev{background:#fff1d6;color:#8a5a00}.t-ok{background:#ececec;color:#444}
+.note .leg{margin-top:12px;padding-top:10px;border-top:1px dashed #d9b400;font-size:11.5px;line-height:1.7}
+@media(max-width:1023px){.note{position:static}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
 </head>
-<body>
-<div class="proto">PROTÓTIPO DE MELHORIAS – não preencha dados reais. Nada é enviado.
-  <label><input type="checkbox" id="tg" checked> mostrar notas</label></div>
-<header><button class="back" onclick="back()" aria-label="Voltar">←</button><span class="logo">Porto</span></header>
-<div class="bar"><i id="bar" style="width:0"></i></div>
+<body class="bv no-bar">
+<div class="proto" role="region" aria-label="Aviso do protótipo">
+  <span>PROTÓTIPO DE MELHORIAS – não preencha dados reais. Nada é enviado.</span>
+  <span style="display:inline-flex;gap:14px;align-items:center;flex-wrap:wrap">
+    <label><input type="checkbox" id="tgNotes" checked> mostrar notas</label>
+    <span class="seg" id="seg" role="group" aria-label="Versão exibida"><button type="button" data-m="prop" aria-pressed="true">Proposto</button><button type="button" data-m="atual" aria-pressed="false">Atual</button></span>
+    <small id="segInfo"></small>
+  </span>
+</div>
 
-<div class="wrap">
-<main>
+<header class="hd">
+  <button class="back" type="button" onclick="back()" aria-label="Voltar para página anterior"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12H2.5M10 4.5 2.5 12l7.5 7.5"/></svg></button>
+  <span class="logo" aria-label="Porto">Porto</span>
+  <span></span>
+</header>
+<div class="pbar" aria-hidden="true"><i id="bar"></i></div>
 
-<section class="step on" data-s="boas-vindas">
-  <h1>Crédito rápido com <em>taxa abaixo</em> do mercado</h1>
-  <p>Use seu carro quitado como garantia e receba seu dinheiro em até 48 horas.</p>
-  <div class="perks"><span>Taxas a partir de 1,30% a.m.</span><span>Até 60 meses</span><span>O carro fica com você</span></div>
-  <div class="box"><b>Antes de começar, confira se você pode simular:</b>
-    <ul class="check" style="margin:10px 0 0">
-      <li>Você tem uma oferta de crédito pré-aprovada na Porto (verificamos pelo CPF)</li>
-      <li>O carro está no seu nome e totalmente quitado</li>
-      <li>O carro tem até 15 anos de fabricação</li>
-      <li>Você tem até 75 anos</li>
-    </ul></div>
-  <p class="muted">Leva cerca de 3 minutos · 6 etapas</p>
-  <button class="btn" onclick="go('cpf')">Ver se tenho crédito pré-aprovado</button>
-</section>
+<div class="main">
+<main class="content" id="content">
 
-<section class="step" data-s="cpf">
-  <div class="eyebrow">Etapa 1 de 6</div>
-  <h2>Digite seu CPF para começar</h2>
-  <p>Vamos verificar se existe uma oferta de crédito pré-aprovada para você.</p>
-  <div class="field" id="f-cpf"><label for="cpf">CPF</label>
-    <input id="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14" oninput="maskCpf(this)">
-    <div class="msg">Confira os 11 números do CPF. Parece que algum dígito está diferente.</div></div>
-  <p class="priv">Ao continuar, você concorda com o tratamento dos seus dados conforme a Política de Privacidade.</p>
-  <button class="btn" onclick="cpfNext()">Continuar</button>
-  <button class="btn link" onclick="go('cpf-nao')">Ver como fica a tela de CPF não elegível</button>
-</section>
-
-<section class="step" data-s="cpf-nao">
-  <div class="eyebrow">Resultado da consulta</div>
-  <h2>Ainda não temos uma oferta pré-aprovada para este CPF</h2>
-  <p>A oferta de empréstimo com garantia de veículo depende de uma análise prévia do seu perfil. Isso pode mudar com o tempo.</p>
-  <div class="box"><b>Quer que a gente avise quando houver uma oferta para você?</b>
-    <div class="field" style="margin-top:10px"><label for="avise">E-mail</label><input id="avise" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"></div>
-    <button class="btn" onclick="alert('Protótipo: nada foi enviado.')">Quero ser avisado</button></div>
-  <p><b>Outras opções para você agora</b></p>
-  <button class="btn ghost">Empréstimo consignado</button>
-  <button class="btn ghost">Falar com um especialista no WhatsApp</button>
-  <button class="btn link" onclick="go('placa')">Seguir o protótipo (como se o CPF fosse aprovado)</button>
-</section>
-
-<section class="step" data-s="placa">
-  <div class="eyebrow">Etapa 2 de 6</div>
-  <h2>Qual é a placa do carro da garantia?</h2>
-  <div class="field" id="f-placa"><label for="placa">Placa</label>
-    <input id="placa" placeholder="ABC1D23" maxlength="8" style="text-transform:uppercase">
-    <div class="msg">Este carro tem mais de 15 anos de fabricação. Você pode tentar com outro veículo.</div></div>
-  <ul class="check"><li>No seu nome</li><li>Totalmente quitado</li><li>Com até 15 anos de fabricação</li></ul>
-  <button class="btn" onclick="go('simulacao')">Continuar</button>
-  <button class="btn link" onclick="document.getElementById('f-placa').classList.toggle('bad')">Ver erro de veículo com mais de 15 anos</button>
-</section>
-
-<section class="step" data-s="simulacao">
-  <div class="eyebrow">Etapa 3 de 6</div>
-  <h2>Quanto você precisa?</h2>
-  <div class="sim"><div class="muted">Valor do empréstimo</div><div class="big" id="val">R$ 30.000</div>
-    <input type="range" min="5000" max="80000" step="1000" value="30000" oninput="sim()" id="rng">
-    <div class="muted" style="display:flex;justify-content:space-between"><span>R$ 5 mil</span><span>Seu limite pré-aprovado: R$ 80 mil</span></div></div>
-  <div class="muted">Em quantas vezes?</div>
-  <div class="opts" id="opts"><button onclick="pz(24,this)">24x</button><button onclick="pz(36,this)">36x</button><button class="sel" onclick="pz(48,this)">48x</button><button onclick="pz(60,this)">60x</button></div>
-  <div class="box"><b id="parc">48x de R$ 0</b><span class="muted">Valores ilustrativos do protótipo. A proposta final depende de análise.</span></div>
-  <button class="btn" onclick="go('dados')">Continuar</button>
-</section>
-
-<section class="step" data-s="dados">
-  <div class="eyebrow">Etapa 4 de 6</div>
-  <h2>Para quem enviamos a proposta?</h2>
-  <div class="field"><label for="nome">Nome completo</label><input id="nome" autocomplete="name" placeholder="Como está no seu documento"></div>
-  <div class="field"><label for="cel">Celular com DDD</label><input id="cel" type="tel" autocomplete="tel-national" inputmode="numeric" placeholder="(11) 91234-5678"></div>
-  <div class="field"><label for="mail">E-mail</label><input id="mail" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"></div>
-  <div class="row">
-    <div class="field"><label for="nasc">Data de nascimento</label><input id="nasc" inputmode="numeric" placeholder="DD/MM/AAAA"></div>
-    <div class="field"><label for="sexo">Sexo</label><select id="sexo"><option>Selecione</option><option>Feminino</option><option>Masculino</option></select></div>
+<!-- ================= BOAS-VINDAS ================= -->
+<section class="step on" data-s="bv" aria-labelledby="h-bv">
+ <div class="wc">
+  <div class="wc-head">
+   <h1 id="h-bv" tabindex="-1">Crédito rápido com <span class="hl">taxa abaixo</span> do mercado</h1>
+   <p class="sub">Use seu carro quitado como garantia e receba seu dinheiro em até 48 horas.</p>
   </div>
-  <div class="field"><label for="mae">Nome completo da mãe</label><input id="mae" placeholder="Como está no documento"><div class="help">Usado para confirmar sua identidade.</div></div>
-  <div class="field"><label for="ocup">Profissão</label><select id="ocup"><option>Selecione</option><option>Assalariado(a)</option><option>Autônomo(a)</option><option>Empresário(a)</option><option>Aposentado(a)</option></select></div>
-  <button class="btn" onclick="go('cep')">Continuar</button>
+  <ul class="icons">
+   <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M9 3.5h10.5l5.5 5.5v19.5H9z"/><path d="M19.5 3.5V9H25"/><path d="M13.5 22.5l6-7"/><circle cx="14" cy="16" r="1.3"/><circle cx="19" cy="22" r="1.3"/></svg>Taxas a partir de 1,30% ao mês</li>
+   <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="12.5"/><path d="M16 8v8l-3.5 3.5"/></svg>Até 60 meses para pagar</li>
+   <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 21.5v-5l3-1.5 3.5-5h11l4 5 3.5 1v5.5H27"/><path d="M8.5 21.5h10"/><circle cx="6.5" cy="21.5" r="2.3"/><circle cx="23.5" cy="21.5" r="2.3"/><path d="M11 15h13"/></svg>O carro fica com você</li>
+  </ul>
+  <div class="v-prop stack" style="gap:24px">
+   <div class="resume" id="resume" hidden>
+    <span><b>Você já começou uma simulação.</b> Continue de onde parou: <span id="resumeStep"></span>.</span>
+    <div class="row2"><button class="btn" type="button" onclick="resumeGo()">Continuar simulação</button><button class="btn ghost" type="button" onclick="resumeClear()">Começar de novo</button></div>
+   </div>
+   <div class="req">
+    <b>Antes de começar, confira se você pode simular:</b>
+    <ul>
+     <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>Você precisa ter uma oferta de crédito pré-aprovada na Porto (verificamos pelo CPF)</li>
+     <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>O carro está no seu nome e totalmente quitado</li>
+     <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>O carro tem até 15 anos de fabricação</li>
+     <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>Você tem até 75 anos</li>
+    </ul>
+   </div>
+   <p class="body1 muted-w" style="font-size:14px;line-height:20px">Leva cerca de 3 minutos · 6 etapas</p>
+  </div>
+  <div class="fixed-bottom">
+   <button class="btn v-prop" type="button" onclick="next()">Ver se tenho crédito pré-aprovado</button>
+   <button class="btn v-atual" type="button" onclick="next()">Simular agora</button>
+  </div>
+ </div>
 </section>
 
-<section class="step" data-s="cep">
-  <div class="eyebrow">Etapa 5 de 6</div>
-  <h2>Qual é o seu endereço?</h2>
-  <div class="field"><label for="cepi">CEP</label><input id="cepi" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000"><div class="help">Preenchemos rua, bairro e cidade para você.</div></div>
-  <div class="row"><div class="field"><label>Número</label><input inputmode="numeric"></div><div class="field"><label>Complemento</label><input placeholder="Opcional"></div></div>
-  <div class="box">Pronto: com isso já conseguimos falar com você se precisar de ajuda para concluir.</div>
-  <button class="btn" onclick="go('banco')">Continuar</button>
+<!-- ================= CPF ================= -->
+<section class="step" data-s="cpf" aria-labelledby="h-cpf">
+ <div class="stack v-prop">
+  <p class="eyebrow" data-eyebrow></p>
+  <h2 class="t-title" id="h-cpf" tabindex="-1">Digite seu CPF para começar</h2>
+  <p class="t-p">Vamos verificar se existe uma oferta de crédito pré-aprovada para você.</p>
+  <div class="ib-wrap" id="f-cpf">
+   <label class="lbl" for="cpf">CPF</label>
+   <input class="ib" id="cpf" type="text" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14" aria-describedby="cpf-err" oninput="maskCpf(this)" onblur="cpfBlur()">
+   <svg class="ib-icon alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg>
+   <svg class="ib-icon check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+   <div class="ib-err" id="cpf-err" role="alert">Confira os 11 números do CPF. Algum dígito parece diferente.</div>
+  </div>
+  <div class="trust">
+   <div><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="9" width="12" height="8.5" rx="1.5"/><path d="M6.5 9V6.5a3.5 3.5 0 0 1 7 0V9"/></svg>Simular não gera compromisso: o contrato só é fechado depois da aprovação.</div>
+   <div><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2.5l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L2.8 7.8l5-.7z"/></svg>Porto, há mais de 80 anos no mercado <span class="caption">(texto ilustrativo: a Porto valida a prova social)</span></div>
+  </div>
+  <div class="ph-legal">[Texto de privacidade da Porto mantido como está hoje, com link para a Política de Privacidade]</div>
+  <div class="demo"><b>Protótipo:</b><button type="button" onclick="demoCpfErr()">ver erro de digitação</button><button type="button" onclick="go('cpfnao')">ver CPF sem oferta</button><button type="button" onclick="go('placa')">seguir como se o CPF fosse aprovado</button></div>
+  <div class="foot"><button class="btn" type="button" onclick="cpfNext()">Continuar</button></div>
+ </div>
+ <div class="stack v-atual">
+  <h2 class="t-title" tabindex="-1">Digite seu CPF para começar</h2>
+  <p class="t-p">Vamos simular as melhores condições de crédito para você.</p>
+  <div class="ib-wrap" id="f-cpfA">
+   <input class="ib" id="cpfA" type="tel" maxlength="14" placeholder="CPF" aria-label="CPF" oninput="maskCpf(this)">
+   <svg class="ib-icon alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg>
+   <div class="ib-err">Informe um número de CPF válido</div>
+  </div>
+  <div class="ph-legal">[Texto de privacidade da Porto, como está hoje]</div>
+  <div class="demo"><b>Protótipo:</b><button type="button" onclick="demoCpfErrA()">ver erro de digitação</button><button type="button" onclick="go('cpfnao')">ver CPF sem oferta</button><button type="button" onclick="go('placa')">seguir como se o CPF fosse aprovado</button></div>
+  <div class="foot"><button class="btn" type="button" onclick="cpfNextA()">Continuar</button></div>
+ </div>
 </section>
 
-<section class="step" data-s="banco">
-  <div class="eyebrow">Etapa 6 de 6</div>
-  <h2>Em qual conta você quer receber <span id="vb">R$ 30.000</span>?</h2>
-  <p class="muted">A conta precisa estar no seu nome. Usamos estes dados só para o depósito.</p>
-  <div class="field"><label>Banco</label><select><option>Selecione o banco</option><option>Porto Bank</option><option>Outro banco</option></select></div>
-  <div class="row"><div class="field"><label>Agência</label><input inputmode="numeric" placeholder="0000"></div><div class="field"><label>Conta com dígito</label><input inputmode="numeric" placeholder="00000-0"></div></div>
-  <button class="btn" onclick="go('resumo')">Revisar proposta</button>
+<!-- ================= CPF SEM OFERTA ================= -->
+<section class="step" data-s="cpfnao" aria-labelledby="h-cpfnao">
+ <div class="stack v-prop">
+  <h2 class="t-title" id="h-cpfnao" tabindex="-1">Ainda não temos uma oferta pré-aprovada para este CPF</h2>
+  <p class="t-p">O empréstimo com garantia de veículo depende de uma análise prévia do seu perfil, que é atualizada com o tempo.</p>
+  <div class="ci" style="margin-top:-8px">
+   <p class="body1" style="font-weight:700;margin-bottom:12px">Quer que a gente avise quando houver uma oferta para você?</p>
+   <div class="box"><input id="avise" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nome@exemplo.com"><label class="fl" for="avise">E-mail</label></div>
+  </div>
+  <button class="btn" type="button" onclick="demoSent(this)">Quero ser avisado</button>
+  <div class="btns">
+   <p class="body1" style="font-weight:700">Outras opções para você agora</p>
+   <button class="btn stroke" type="button">Empréstimo consignado</button>
+   <button class="btn stroke" type="button" onclick="waDemo()">Falar com um especialista no WhatsApp</button>
+  </div>
+  <div class="demo"><b>Protótipo:</b><button type="button" onclick="go('placa')">seguir como se o CPF fosse aprovado</button></div>
+ </div>
+ <div class="stack v-atual">
+  <h2 class="t-title" tabindex="-1">Digite seu CPF para começar</h2>
+  <p class="t-p">Vamos simular as melhores condições de crédito para você.</p>
+  <div class="ib-wrap bad"><input class="ib" type="tel" value="•••.•••.•••-••" aria-label="CPF" readonly><svg class="ib-icon alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg><div class="ib-err">Este CPF não é elegível para empréstimo</div></div>
+  <p class="body1" style="font-weight:700">Produtos recomendados</p>
+  <div class="grid2"><div class="card" style="padding:16px;min-height:120px"><b>Empréstimo Consignado</b><p class="caption">Cartão de produto recomendado</p></div><div class="card" style="padding:16px;min-height:120px"><b>Outro produto</b><p class="caption">Cartão de produto recomendado</p></div></div>
+  <div class="demo"><b>Protótipo:</b><button type="button" onclick="go('placa')">seguir como se o CPF fosse aprovado</button></div>
+ </div>
 </section>
 
-<section class="step" data-s="resumo">
-  <h2>Revise a sua simulação</h2>
-  <p class="muted">O contrato só é fechado depois da aprovação.</p>
-  <div class="sum"><div><span>Valor</span><b id="rv">R$ 30.000</b></div><div><span>Parcelas</span><b id="rp">48x</b></div><div><span>Garantia</span><b>Placa informada</b></div></div>
-  <button class="btn" style="margin-top:18px" onclick="go('fim')">Enviar proposta para análise</button>
+<!-- ================= PLACA ================= -->
+<section class="step" data-s="placa" aria-labelledby="h-placa">
+ <div class="stack v-prop">
+  <p class="eyebrow" data-eyebrow></p>
+  <h2 class="t-title" id="h-placa" tabindex="-1">Informe a placa do veículo para a garantia</h2>
+  <div class="ib-wrap" id="f-placa">
+   <label class="lbl" for="placa">Placa do veículo</label>
+   <input class="ib" id="placa" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="ABC-1D23" maxlength="8" aria-describedby="placa-help placa-err" oninput="maskPlaca(this)">
+   <svg class="ib-icon alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg>
+   <div class="ib-help" id="placa-help">Vale placa Mercosul (ABC-1D23) ou modelo antigo (ABC-1234).</div>
+   <div class="ib-err" id="placa-err" role="alert"></div>
+  </div>
+  <div id="placaAcao" hidden><button class="btn stroke" type="button" onclick="placaOutro()">Tentar com outro veículo</button></div>
+  <p class="body1">Para dar certo, o veículo precisa estar:</p>
+  <ul class="list" style="margin-top:-16px">
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>No seu nome</li>
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Totalmente quitado</li>
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Com até 15 anos de fabricação</li>
+  </ul>
+  <div class="demo"><b>Protótipo, resposta do sistema:</b><button type="button" onclick="placaErr('INVALID_VEHICLE_PLATE')">placa inválida</button><button type="button" onclick="placaErr('NOT_ALLOWED_VEHICLE_MANUFACTURE_YEAR')">mais de 15 anos</button><button type="button" onclick="placaErr('NOT_ALLOWED_VEHICLE_TYPE')">tipo de veículo</button><button type="button" onclick="placaErr('NOT_ELIGIBLE_VEHICLE')">não quitado / outro dono</button></div>
+  <div class="foot"><button class="btn" type="button" onclick="placaNext()">Continuar</button></div>
+ </div>
+ <div class="stack v-atual">
+  <h2 class="t-title" tabindex="-1">Informe a placa do veículo para a garantia</h2>
+  <div class="ib-wrap" id="f-placaA">
+   <input class="ib" id="placaA" type="text" placeholder="ABC 0X00" aria-label="ABC 0X00" maxlength="8" oninput="maskPlaca(this)">
+   <svg class="ib-icon alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg>
+   <div class="ib-err" id="placaA-err"></div>
+  </div>
+  <p class="body1">Para dar certo, o veículo precisa estar:</p>
+  <ul class="list" style="margin-top:-16px">
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>No seu nome</li>
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Totalmente quitado</li>
+   <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Com até 15 anos de fabricação</li>
+  </ul>
+  <div class="demo"><b>Protótipo, resposta do sistema:</b><button type="button" onclick="placaErrA('INVALID_VEHICLE_PLATE')">placa inválida</button><button type="button" onclick="placaErrA('NOT_ALLOWED_VEHICLE_MANUFACTURE_YEAR')">mais de 15 anos</button><button type="button" onclick="placaErrA('NOT_ALLOWED_VEHICLE_TYPE')">tipo de veículo</button></div>
+  <div class="foot"><button class="btn" type="button" onclick="next()">Continuar</button></div>
+ </div>
 </section>
 
-<section class="step" data-s="fim">
-  <h2>Proposta enviada para análise</h2>
-  <p>Você recebe o retorno por e-mail e WhatsApp. Fim do protótipo.</p>
-  <button class="btn ghost" onclick="go('boas-vindas')">Recomeçar</button>
+<!-- ================= SIMULAÇÃO ================= -->
+<section class="step" data-s="sim" aria-labelledby="h-sim">
+ <div class="stack">
+  <p class="eyebrow v-prop" data-eyebrow></p>
+  <h2 class="t-title" id="h-sim" tabindex="-1">Vamos simular o empréstimo</h2>
+  <div class="sim">
+   <label class="lab" for="rng">Quanto você precisa?</label>
+   <div class="big" id="val">R$ 30.000</div>
+   <input type="range" id="rng" min="5000" max="80000" step="1000" value="30000" oninput="sim()" aria-describedby="limite">
+   <div class="ends"><span>R$ 5 mil</span><span id="limite"><span class="v-prop">Seu limite pré-aprovado: <b>R$ 80 mil</b></span><span class="v-atual">&nbsp;</span></span></div>
+   <span class="lab" id="lbPz">Em quantas vezes?</span>
+   <div class="opts" role="group" aria-labelledby="lbPz" id="opts"><button type="button" data-p="24" aria-pressed="false">24x</button><button type="button" data-p="36" aria-pressed="false">36x</button><button type="button" data-p="48" aria-pressed="true">48x</button><button type="button" data-p="60" aria-pressed="false">60x</button></div>
+   <div class="parc" id="parc">48x de R$ 0</div>
+   <span class="caption">Valores ilustrativos do protótipo. A taxa e a proposta final dependem de análise.</span>
+  </div>
+  <div class="notif danger" id="simErr" hidden role="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg><span class="v-prop"><b>Esse valor passa do seu limite pré-aprovado.</b>Seu limite é de R$ 80.000. Escolha um valor até esse limite para continuar.</span><span class="v-atual">O valor solicitado é maior que o crédito pré-aprovado.</span></div>
+  <div class="ph-legal">[Aviso da Porto sobre análise da proposta, como está hoje]</div>
+  <div class="demo"><b>Protótipo:</b><button type="button" onclick="simErrDemo()">ver erro de valor acima do pré-aprovado</button></div>
+  <div class="foot"><button class="btn" type="button" onclick="next()">Continuar</button></div>
+ </div>
+</section>
+
+<!-- ================= DADOS PESSOAIS ================= -->
+<section class="step" data-s="dados" aria-labelledby="h-dados">
+ <div class="stack v-prop">
+  <p class="eyebrow" data-eyebrow></p>
+  <h2 class="t-title" id="h-dados" tabindex="-1">Para quem enviamos a proposta?</h2>
+  <div class="chip-sum" data-sum></div>
+  <div class="fields">
+   <div class="ci" id="c-nome"><div class="box"><input id="nome" autocomplete="name" autocapitalize="words" maxlength="60" placeholder="Como está no seu documento" aria-describedby="nome-err"><label class="fl" for="nome">Nome completo</label></div><div class="err" id="nome-err">Escreva seu nome e sobrenome.</div></div>
+   <label class="chk"><input type="checkbox" id="temSocial" onchange="document.getElementById('c-social').hidden=!this.checked">Tenho nome social</label>
+   <div class="ci" id="c-social" hidden><div class="box"><input id="social" autocomplete="nickname" maxlength="60" placeholder="Como você prefere ser chamado(a)"><label class="fl" for="social">Nome social</label></div></div>
+   <div class="ci"><div class="box"><input id="cel" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(11) 91234-5678" maxlength="15" oninput="maskTel(this)"><label class="fl" for="cel">Celular com DDD</label></div><div class="help">Usamos para falar sobre a sua proposta.</div></div>
+   <div class="ci"><div class="box"><input id="mail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nome@exemplo.com"><label class="fl" for="mail">E-mail</label></div></div>
+   <div class="grid2">
+    <div class="ci"><div class="box"><input id="nasc" inputmode="numeric" autocomplete="bday" placeholder="DD/MM/AAAA" maxlength="10" oninput="maskData(this)"><label class="fl" for="nasc">Data de nascimento</label></div></div>
+    <div class="ci sel"><div class="box"><select id="sexo"><option value="">Selecione</option><option>Feminino</option><option>Masculino</option></select><label class="fl" for="sexo">Sexo</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
+   </div>
+   <div class="ci"><div class="box"><input id="mae" autocomplete="off" autocapitalize="words" maxlength="60" placeholder="Como está no documento"><label class="fl" for="mae">Nome completo da mãe</label></div><div class="help">Usado só para confirmar sua identidade. Aceita até 60 caracteres.</div></div>
+   <div class="ci sel"><div class="box"><select id="ocup"><option value="">Selecione</option><option>Assalariado(a)</option><option>Autônomo(a)</option><option>Empresário(a)</option><option>Aposentado(a) ou pensionista</option><option>Servidor(a) público(a)</option></select><label class="fl" for="ocup">Profissão</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
+   <label class="chk"><input type="checkbox">Tenho interesse em receber comunicação com condições especiais e ofertas de Produtos e Serviços Porto.</label>
+  </div>
+  <div class="foot"><button class="btn" type="button" onclick="dadosNext()">Continuar</button></div>
+ </div>
+ <div class="stack v-atual">
+  <h2 class="t-title" tabindex="-1">Agora, só mais algumas informações suas</h2>
+  <div class="fields">
+   <div class="ci"><div class="box"><input placeholder="Nome completo" maxlength="60"><label class="fl">Nome completo</label></div><div class="help">O nome completo deve ter no máximo 60 caracteres.</div></div>
+   <label class="chk"><input type="checkbox">Tenho nome social</label>
+   <div class="ci" id="c-maeA"><div class="box"><input id="maeA" placeholder="Enter text..." oninput="maeA()"><label class="fl" for="maeA">Nome da mãe completo</label></div><div class="err">O nome da mãe deve ter no máximo 35 caracteres.</div></div>
+   <div class="ci"><div class="box"><input placeholder="DD/MM/AAAA" maxlength="10" oninput="maskData(this)"><label class="fl">Data de nascimento</label></div></div>
+   <div class="ci"><div class="box"><input placeholder="Enter text..."><label class="fl">Email</label></div></div>
+   <div class="ci"><div class="box"><input placeholder="Enter text..." maxlength="15" oninput="maskTel(this)"><label class="fl">Celular</label></div></div>
+   <div class="ci sel"><div class="box"><select><option value="">Selecione</option><option>Feminino</option><option>Masculino</option></select><label class="fl">Sexo</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
+   <div class="ci sel"><div class="box"><select><option value="">Selecione</option><option>Assalariado(a)</option><option>Autônomo(a)</option><option>Empresário(a)</option></select><label class="fl">Profissão</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
+   <label class="chk"><input type="checkbox">Tenho interesse em receber comunicação com condições especiais e ofertas de Produtos e Serviços Porto.</label>
+  </div>
+  <div class="demo"><b>Protótipo:</b><button type="button" onclick="demoMae()">ver erro de nome da mãe com mais de 35 caracteres</button></div>
+  <div class="foot"><button class="btn" type="button" onclick="next()">Continuar</button></div>
+ </div>
+</section>
+
+<!-- ================= CEP ================= -->
+<section class="step" data-s="cep" aria-labelledby="h-cep">
+ <div class="stack">
+  <p class="eyebrow v-prop" data-eyebrow></p>
+  <h2 class="t-title" id="h-cep" tabindex="-1">Qual é o seu endereço?</h2>
+  <div class="chip-sum v-prop" data-sum></div>
+  <div class="fields">
+   <div class="ci" id="c-cep"><div class="box"><input id="cepi" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" oninput="maskCep(this)"><label class="fl" for="cepi">CEP</label></div><div class="help"><a href="#" onclick="return false">Não sei meu CEP</a></div></div>
+   <div id="addrBox" hidden class="fields">
+    <div class="addr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span><b>Rua Exemplo do Protótipo</b><br>Centro – Cidade Fictícia/SP</span></div>
+    <div class="grid2"><div class="ci"><div class="box"><input id="num" inputmode="numeric" autocomplete="address-line2" placeholder="123"><label class="fl" for="num">Número</label></div></div><div class="ci"><div class="box"><input id="comp" autocomplete="address-line3" placeholder="Opcional"><label class="fl" for="comp">Complemento</label></div></div></div>
+   </div>
+  </div>
+  <div class="demo"><b>Protótipo:</b> digite qualquer CEP de 8 números: o endereço aparece com dados fictícios (nada é consultado).</div>
+  <div class="foot"><button class="btn" type="button" onclick="next()">Continuar</button></div>
+ </div>
+</section>
+
+<!-- ================= DADOS BANCÁRIOS ================= -->
+<section class="step" data-s="banco" aria-labelledby="h-banco">
+ <div class="stack v-prop">
+  <p class="eyebrow" data-eyebrow></p>
+  <h2 class="t-title" id="h-banco" tabindex="-1">Em qual conta você quer receber o valor de <span data-valor>R$ 30.000</span>?</h2>
+  <p class="body1" style="color:var(--n800)">A conta precisa estar no seu nome. Usamos estes dados só para o depósito.</p>
+  <div class="fields">
+   <div class="ci sel"><div class="box"><select id="bank"><option value="">Selecione</option><optgroup label="Mais usados"><option>341 - Itaú Unibanco</option><option>237 - Bradesco</option><option>001 - Banco do Brasil</option><option>104 - Caixa Econômica Federal</option><option>260 - Nu Pagamentos (Nubank)</option><option>033 - Santander</option></optgroup><optgroup label="Todos os bancos (A a Z)"><option>077 - Banco Inter</option><option>336 - Banco C6</option><option>323 - Mercado Pago</option><option>290 - PagSeguro</option><option>…demais instituições</option></optgroup></select><label class="fl" for="bank">Instituição</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
+   <div class="grid2"><div class="ci"><div class="box"><input id="ag" inputmode="numeric" placeholder="0000" maxlength="4"><label class="fl" for="ag">Agência (sem dígito)</label></div></div><div class="ci"><div class="box"><input id="cc" inputmode="numeric" placeholder="00000" maxlength="10"><label class="fl" for="cc">Conta</label></div></div></div>
+   <div class="ci" style="max-width:50%"><div class="box"><input id="dg" inputmode="numeric" placeholder="0" maxlength="1"><label class="fl" for="dg">Dígito da conta</label></div><div class="help">Se o dígito for X, digite 0.</div></div>
+  </div>
+  <div class="notif info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7.5v.5"/></svg>Com a Conta Porto, você recebe o seu crédito de forma mais rápida.</div>
+  <p class="parc" data-parc></p>
+  <div class="foot"><button class="btn" type="button" onclick="next()">Revisar proposta</button></div>
+ </div>
+ <div class="stack v-atual">
+  <h2 class="t-title" tabindex="-1">Em qual conta você quer receber o valor de <span data-valor>R$ 30.000</span>?</h2>
+  <div class="fields">
+   <div class="ci sel"><div class="box"><select><option value="">Selecione</option><option>001 - Banco do Brasil</option><option>033 - Santander</option><option>077 - Banco Inter</option><option>104 - Caixa Econômica Federal</option><option>237 - Bradesco</option><option>260 - Nu Pagamentos</option><option>…demais instituições, por código</option></select><label class="fl">Instituição</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
+   <div class="ci"><div class="box"><input inputmode="numeric" maxlength="4" placeholder=" "><label class="fl">Agência</label></div></div>
+   <div class="ci"><div class="box"><input inputmode="numeric" maxlength="10" placeholder=" "><label class="fl">Conta</label></div></div>
+   <div class="ci"><div class="box"><input inputmode="numeric" maxlength="1" placeholder=" "><label class="fl">Digito da conta</label></div><div class="help">Para dígito "X", troque pelo número "0".</div></div>
+  </div>
+  <div class="notif info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7.5v.5"/></svg>Com a Conta Porto, você recebe o seu crédito de forma mais rápida.</div>
+  <p class="parc" data-parc></p>
+  <div class="foot"><button class="btn" type="button" onclick="next()">Continuar</button></div>
+ </div>
+</section>
+
+<!-- ================= RESUMO ================= -->
+<section class="step" data-s="resumo" aria-labelledby="h-resumo">
+ <div class="stack">
+  <h2 class="t-title" id="h-resumo" tabindex="-1">Revise a sua simulação</h2>
+  <p class="t-p">O contrato será fechado somente depois da aprovação.</p>
+  <div class="card"><div class="r"><span>Valor do crédito</span><b data-valor>R$ 30.000</b></div><div class="r"><span>Parcelas</span><b id="rp">48x</b></div><div class="r"><span>Veículo da garantia</span><b id="rplaca">Placa informada</b></div><div class="r"><span>Conta para depósito</span><b>Conta informada</b></div></div>
+  <div class="foot"><button class="btn" type="button" onclick="enviar()">Enviar proposta para análise</button></div>
+ </div>
+</section>
+
+<!-- ================= PROPOSTA ENVIADA ================= -->
+<section class="step" data-s="fim" aria-labelledby="h-fim">
+ <div class="stack v-prop" style="gap:28px">
+  <span class="done-ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+  <h2 class="done-t" id="h-fim" tabindex="-1">Proposta enviada para análise</h2>
+  <p class="done-s">Protocolo <b id="proto">CGV-0000000</b>. Enviamos uma cópia para o seu e-mail.</p>
+  <div><p class="body1" style="font-weight:700;margin-bottom:14px">O que acontece agora</p>
+   <ol class="steps3">
+    <li><b>Análise da proposta</b>Nossa equipe analisa seus dados e o veículo em até 48 horas.</li>
+    <li><b>Contato da Porto</b>Falamos com você por e-mail ou telefone, no celular que você informou, com os próximos passos.</li>
+    <li><b>Contrato e dinheiro na conta</b>Com a aprovação, você revisa e assina o contrato. O valor cai na conta informada.</li>
+   </ol></div>
+  <div class="card"><div class="r"><span>Valor do crédito</span><b data-valor>R$ 30.000</b></div><div class="r"><span>Parcelas</span><b data-rp>48x</b></div></div>
+  <div class="btns"><button class="btn" type="button" onclick="waDemo()">Tirar dúvidas no WhatsApp</button><button class="btn ghost" type="button">Conheça outros produtos</button></div>
+  <div class="demo"><b>Protótipo:</b><button type="button" onclick="restart()">recomeçar</button></div>
+ </div>
+ <div class="stack v-atual" style="gap:28px">
+  <span class="done-ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+  <h2 class="done-t" tabindex="-1">Proposta enviada!</h2>
+  <p class="done-s">A solicitação já está com a nossa equipe. Entraremos em contato por e-mail ou telefone em até 48 horas.</p>
+  <div class="banner"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="9" y="3" width="14" height="26" rx="2.5"/><path d="M14 25.5h4"/></svg><div><b>Baixe o App Porto</b><br>Gerencie seu empréstimo Porto Bank em um só lugar.<br><a href="#" onclick="return false">Baixar agora</a></div></div>
+  <div><p class="body1" style="font-weight:700;margin-bottom:8px">Resumo da proposta</p><div class="card"><div class="r"><span>Valor do crédito</span><b data-valor>R$ 30.000</b></div><div class="r"><span>Parcelas</span><b data-rp>48x</b></div></div></div>
+  <div class="btns"><button class="btn" type="button">Conheça outros produtos</button><button class="btn ghost" type="button">Fechar</button></div>
+  <div class="demo"><b>Protótipo:</b><button type="button" onclick="restart()">recomeçar</button></div>
+ </div>
 </section>
 
 </main>
-
-<aside class="note" id="note"></aside>
+<aside class="notes" aria-label="Notas do protótipo"><div class="note" id="note"></div></aside>
 </div>
-<a class="wa" href="#" onclick="return false" title="WhatsApp">WA</a>
+
+<button class="wa" type="button" onclick="waDemo()" aria-label="Falar pelo WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-3.9A8.5 8.5 0 1 1 8 19z"/><path d="M9 8.5c0 3.5 2.6 6.4 6.3 6.6l1.2-1.6-1.9-1-1 .9c-1-.4-2-1.4-2.4-2.4l.9-1-1-1.9z" fill="currentColor" stroke-width="1"/></svg></button>
+<div class="loading" id="loading" role="status" aria-live="polite"><p id="loadMsg">Analisando sua proposta...</p><div class="lp"><i id="loadBar"></i></div></div>
+<div class="sr" aria-live="polite" id="live"></div>
 
 <script>
+"use strict";
+/* Nada neste arquivo envia dados: sem fetch, sem XHR, sem formulário com action, sem scripts de terceiros.
+   O localStorage guarda só o nome da última etapa vista (para demonstrar "continuar de onde parou"), nunca o que foi digitado. */
+const ORDEM={prop:["bv","cpf","placa","sim","dados","cep","banco","resumo","fim"],atual:["bv","cpf","placa","sim","banco","dados","cep","resumo","fim"]};
+const PROG={prop:{bv:0,cpf:20,cpfnao:20,placa:30,sim:50,dados:60,cep:70,banco:80,resumo:90,fim:100},atual:{bv:0,cpf:20,cpfnao:20,placa:30,sim:50,banco:60,dados:70,cep:80,resumo:90,fim:100}};
+const NOME={cpf:"CPF",cpfnao:"CPF",placa:"placa do veículo",sim:"simulação",dados:"dados pessoais",cep:"endereço",banco:"dados bancários",resumo:"revisão"};
+const COM_DIF=["bv","cpf","cpfnao","placa","sim","dados","cep","banco","fim"];
+const T={cfg:"<span class='tag t-cfg'>config</span>",tag:"<span class='tag t-tag'>tag</span>",dev:"<span class='tag t-dev'>dev</span>",devl:"<span class='tag t-dev'>dev leve</span>",ok:"<span class='tag t-ok'>já existe</span>"};
+const N=(id,t,novo)=>"<span class='id'>"+id+"</span>"+(novo?"<span class='novo'>NOVO</span>":"")+" "+t;
 const NOTES={
-"boas-vindas":["Boas-vindas: requisitos antes do CPF",["<span class='tag t-cfg'>config</span>Hoje os requisitos do carro só aparecem na etapa da placa, depois do CPF. Mostrá-los aqui evita que quem não se encaixa digite o CPF e seja reprovado.","<span class='tag t-cfg'>config</span>Deixa claro que o CPF precisa ter oferta pré-aprovada, a principal causa de reprovação.","<span class='tag t-cfg'>config</span>Tempo estimado e nº de etapas reduzem abandono em formulários longos (Baymard/CXL).","<span class='tag t-cfg'>config</span>CTA mais específico que 'Simular agora'."]],
-"cpf":["CPF: expectativa e erro claro",["<span class='tag t-cfg'>config</span>'Etapa 1 de 6' além da barra de progresso.","<span class='tag t-cfg'>config</span>Texto explica por que pedimos o CPF.","<span class='tag t-dev'>dev leve</span>Rótulo fixo acima do campo e mensagem de erro que diz o que corrigir."]],
-"cpf-nao":["CPF não elegível: não perder a pessoa",["Hoje a tela mostra só produtos recomendados. A pessoa sai sem deixar contato.","<span class='tag t-dev'>dev</span>Captura de e-mail 'avise-me' (exige integração com CRM).","<span class='tag t-cfg'>config</span>WhatsApp como saída visível.","<span class='tag t-tag'>tag</span>Medir com o evento alert (alert_code NOT_ELIGIBLE) que já existe."]],
-"placa":["Placa: erro que orienta",["Mantém o checklist que já existe.","<span class='tag t-cfg'>config</span>Mensagens por motivo (já configuradas: +15 anos, placa inválida, tipo de veículo) e opção de tentar outro carro."]],
-"simulacao":["Simulação",["Sem mudança estrutural: mostrar o limite pré-aprovado evita o erro 'valor acima do pré-aprovado'.","<span class='tag t-tag'>tag</span>add_to_cart já é enviado no 'Continuar'."]],
-"dados":["Dados pessoais antes dos bancários",["<span class='tag t-cfg'>config</span>Hoje a ordem é Simulação → Dados bancários → Dados pessoais → CEP. O lead (contato) só é gravado no CEP, depois dos dados bancários.","<span class='tag t-cfg'>config</span>Inverter: pessoais → CEP → bancários grava o contato 1 etapa antes do campo mais sensível (conta bancária).","<span class='tag t-cfg'>config</span>Corrige placeholders em inglês ('Enter text...') de Nome da mãe, E-mail e Celular.","Contato primeiro (nome, celular, e-mail), dados de cadastro depois."]],
-"cep":["CEP: lead gravado aqui",["É aqui que o serviço de lead roda hoje. Com a nova ordem, ele roda antes dos dados bancários.","<span class='tag t-tag'>tag</span>Evento lead dispara aqui e pode alimentar remarketing de quem abandona depois."]],
-"banco":["Dados bancários por último",["Campo mais sensível vem depois do vínculo criado.","<span class='tag t-cfg'>config</span>Agência e conta já validadas pelo motor (4 dígitos; 5 a 10 dígitos)."]],
-"resumo":["Resumo",["Sem mudança."]],
-"fim":["Fim",["Sem mudança."]]};
-const ORDER=["boas-vindas","cpf","placa","simulacao","dados","cep","banco","resumo","fim"];
-let hist=[],cur="boas-vindas",prazo=48;
-function show(s){document.querySelectorAll('.step').forEach(e=>e.classList.toggle('on',e.dataset.s===s));cur=s;
- const i=ORDER.indexOf(s);document.getElementById('bar').style.width=(i<0?15:Math.round(i/(ORDER.length-1)*100))+'%';
- const n=NOTES[s];document.getElementById('note').innerHTML='<b>O que muda nesta etapa: '+n[0]+'</b><ul>'+n[1].map(x=>'<li>'+x+'</li>').join('')+'</ul><p style="margin-top:10px;font-size:12px"><span class="tag t-cfg">config</span>configuração da jornada <span class="tag t-tag">tag</span>GTM/GA4 <span class="tag t-dev">dev</span>desenvolvimento</p>';
- window.scrollTo(0,0);if(s==='simulacao')sim();if(s==='banco')document.getElementById('vb').textContent=fmt(+rng.value);if(s==='resumo'){rv.textContent=fmt(+rng.value);rp.textContent=prazo+'x de '+fmt(parcela())}}
-function go(s){hist.push(cur);show(s)}
-function back(){if(hist.length)show(hist.pop())}
-function fmt(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0})}
-function parcela(){const i=0.0179,v=+rng.value;return v*i/(1-Math.pow(1+i,-prazo))}
-function sim(){val.textContent=fmt(+rng.value);parc.textContent=prazo+'x de '+fmt(parcela())}
-function pz(n,b){prazo=n;document.querySelectorAll('#opts button').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sim()}
-function maskCpf(e){let d=e.value.replace(/\D/g,'').slice(0,11);e.value=d.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');document.getElementById('f-cpf').classList.remove('bad')}
-function cpfNext(){const d=cpf.value.replace(/\D/g,'');if(d.length!==11){document.getElementById('f-cpf').classList.add('bad');return}go('placa')}
-document.getElementById('tg').onchange=e=>document.body.classList.toggle('nonotes',!e.target.checked);
-const rng=document.getElementById('rng');show('boas-vindas');
+bv:["Boas-vindas: requisitos antes do CPF",[
+ T.cfg+N("M1","Requisitos (oferta pré-aprovada, carro no nome, quitado, até 15 anos, idade até 75) aparecem antes do CPF. Hoje só aparecem na etapa da placa, depois da consulta."),
+ T.cfg+N("M4","Tempo estimado e número de etapas. Confirmar o tempo mediano real no GA4 antes de publicar."),
+ T.cfg+N("M5","Botão diz o que acontece: \"Ver se tenho crédito pré-aprovado\" em vez de \"Simular agora\"."),
+ T.dev+N("M16","Continuar de onde parou: avance uma etapa e volte ao início para ver. Hoje a jornada não guarda o progresso.",1),
+ T.dev+N("M18","Desempenho no celular: a boas-vindas já baixa o pacote principal da jornada (2,5 MB; cerca de 860 KB comprimido), além de reCAPTCHA, Dynatrace, VWO e GTM.",1),
+ "No celular, o fundo azul, o texto branco e o botão branco fixo no rodapé seguem a configuração real (mobileBg e position fixedBottom)."]],
+cpf:["CPF: expectativa, rótulo e erro claro",[
+ T.cfg+N("M4","\"Etapa 1 de 6\" além da barra de progresso."),
+ T.cfg+N("M5","O texto diz que é uma consulta de oferta pré-aprovada, não uma simulação livre."),
+ T.devl+N("M8","Rótulo \"CPF\" fixo acima do campo. Hoje \"CPF\" é o texto de exemplo: some ao digitar e tem contraste 2:1 (mínimo 4,5:1, WCAG 1.4.3). Foco com borda escura; hoje a borda de foco #66cafc tem 1,9:1 (mínimo 3:1, WCAG 1.4.11). Erro ligado ao campo com aria-invalid.",1),
+ T.devl+N("M9","Teclado numérico (inputmode=numeric). Hoje o campo é type=tel sem inputmode.",1),
+ T.cfg+N("M14","Segurança e prova social junto do CPF, o campo de maior abandono. O número exato fica a cargo da Porto.",1),
+ T.cfg+N("M11","Erro de digitação diz o que corrigir."),
+ T.tag+"alert (preencheu:cpf:alert) já mede o erro de digitação."]],
+cpfnao:["CPF sem oferta: não perder a pessoa",[
+ "Hoje: mensagem curta abaixo do campo e dois cartões de produtos recomendados. A pessoa sai sem deixar contato.",
+ T.cfg+N("M11","Mensagem do código NOT_ELIGIBLE explica o motivo e o que fazer.",1),
+ T.dev+N("M6","\"Avise-me\" por e-mail (integração com CRM)."),
+ T.cfg+N("M6","WhatsApp como saída visível."),
+ T.tag+"Medir com alert_code = NOT_ELIGIBLE, que já existe."]],
+placa:["Placa: rótulo claro e erro que orienta",[
+ T.cfg+N("M10","Rótulo \"Placa do veículo\" e exemplo dos dois formatos. Hoje o rótulo configurado é \"ABC 0X00\".",1),
+ T.ok+"A máscara já aceita placa Mercosul e modelo antigo e converte para maiúsculas.",
+ T.cfg+N("M11","Mensagem por código com próximo passo e botão \"Tentar com outro veículo\". Use os botões amarelos para comparar Atual × Proposto.",1),
+ T.ok+"Checklist dos requisitos do veículo (mantido)."]],
+sim:["Simulação: limite visível",[
+ T.dev+N("M7","Mostrar o limite pré-aprovado. Vira configuração se o dado já vier da consulta do CPF."),
+ T.cfg+N("M11","Erro de valor acima do limite traz o número do limite. Hoje: \"O valor solicitado é maior que o crédito pré-aprovado.\"",1),
+ T.tag+"add_to_cart já é enviado no \"Continuar\".",
+ "Componente de simulação não visto ao vivo (exige CPF pré-aprovado): visual deduzido do sistema de design."]],
+dados:["Dados pessoais antes dos bancários",[
+ T.cfg+N("M2","Ordem nova: Simulação → Dados pessoais → CEP → Dados bancários. Hoje o contato só é gravado no CEP, depois da conta bancária."),
+ T.cfg+N("M3","Troca os \"Enter text...\" de Nome da mãe, E-mail e Celular por exemplos reais e \"Email\" por \"E-mail\"."),
+ T.cfg+N("M13","Lembrete da simulação no topo. O componente de texto já aceita {{fields...}}, como na etapa de dados bancários.",1),
+ T.devl+N("M9","O formulário inteiro tem autocomplete=\"off\": o celular não oferece nome, e-mail e telefone salvos. Proposta: tirar o off e marcar name, tel-national, email e bday. Campos com fonte 16px (hoje 14px faz o iPhone dar zoom ao tocar).",1),
+ T.cfg+N("M12","Nome da mãe aceita só 35 caracteres; o nome completo aceita 60. Subir para 60 se o sistema de destino aceitar.",1),
+ T.ok+"Nome social já vem recolhido (caixa \"Tenho nome social\").",
+ "Contato primeiro (nome, celular, e-mail); dados de cadastro depois."]],
+cep:["CEP: lead gravado antes dos dados bancários",[
+ T.cfg+N("M2","O serviço de lead roda aqui. Com a ordem nova, ele roda antes da conta bancária."),
+ T.ok+"O CEP já preenche o endereço e existe busca por endereço para quem não sabe o CEP.",
+ T.cfg+N("M13","Lembrete da simulação.",1),
+ T.tag+"Evento lead dispara aqui e pode alimentar remarketing de quem abandona depois."]],
+banco:["Dados bancários por último",[
+ T.cfg+N("M2","Campo mais sensível depois do vínculo criado."),
+ T.devl+N("M17","Bancos mais usados no topo da lista. Hoje a lista vem toda por código.",1),
+ T.cfg+N("M3","\"Digito\" vira \"Dígito\"; texto de ajuda mais direto."),
+ T.ok+"Agência (4 dígitos) e conta (5 a 10 dígitos) já validadas."]],
+resumo:["Revisão",["Sem mudança. As mensagens de carregamento (\"Analisando sua proposta...\") vêm da configuração real."]],
+fim:["Proposta enviada: próximos passos",[
+ T.devl+N("M15","Texto fixo no componente. Proposta: protocolo, o que acontece agora em 3 passos e WhatsApp como ação principal. Hoje a ação principal é \"Conheça outros produtos\".",1),
+ "O protocolo do protótipo é fictício."]]
+};
+let modo="prop",cur="bv",hist=[],prazo=48;
+const $=id=>document.getElementById(id);
+const fmt=(v,c)=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:c?2:0,maximumFractionDigits:c?2:0});
+function parcela(){const i=0.0179,v=+$("rng").value;return v*i/(1-Math.pow(1+i,-prazo))}
+function vis(el){return !!(el.offsetWidth||el.offsetHeight||el.getClientRects().length)}
+
+function show(s,focus){
+ cur=s;document.querySelectorAll(".step").forEach(e=>e.classList.toggle("on",e.dataset.s===s));
+ document.body.classList.toggle("bv",s==="bv");document.body.classList.toggle("no-bar",s==="bv");
+ $("bar").style.width=(PROG[modo][s]||0)+"%";
+ const ordem=ORDEM[modo],i=ordem.indexOf(s==="cpfnao"?"cpf":s);
+ document.querySelectorAll("[data-eyebrow]").forEach(e=>{e.textContent=(i>=1&&i<=6)?"Etapa "+i+" de 6":""});
+ atualizaValores();
+ const temDif=COM_DIF.includes(s);$("seg").dataset.off=!temDif;$("segInfo").textContent=temDif?"":"(sem mudança nesta etapa)";
+ nota();
+ if(s!=="bv"&&s!=="fim"){try{localStorage.setItem("cgvproto_etapa",s)}catch(e){}}
+ if(s==="bv")mostraResume();
+ history.replaceState(null,"","#"+s+(modo==="atual"?"/atual":""));
+ window.scrollTo(0,0);
+ if(focus){const h=[...document.querySelectorAll(".step.on .t-title,.step.on h1,.step.on .done-t")].find(vis);if(h)h.focus({preventScroll:true})}
+ $("live").textContent="Etapa: "+(NOME[s]||"início");
+}
+function nota(){
+ const n=NOTES[cur];if(!n)return;
+ $("note").innerHTML="<h2>O que muda nesta etapa: "+n[0]+"</h2>"+(modo==="atual"?"<p class='mode'>Você está vendo a versão ATUAL, reconstruída a partir da configuração real da jornada.</p>":"<p class='mode'>Versão PROPOSTA. Use \"Atual\" na faixa amarela para comparar.</p>")+"<ul>"+n[1].map(x=>"<li>"+x+"</li>").join("")+"</ul><div class='leg'>"+T.cfg+"configuração da jornada<br>"+T.tag+"GTM/GA4<br>"+T.devl+"/"+T.dev+"desenvolvimento<br>"+T.ok+"comportamento que o site já tem</div>";
+}
+function go(s){hist.push(cur);show(s,true)}
+function next(){const o=ORDEM[modo],base=cur==="cpfnao"?"cpf":cur,i=o.indexOf(base);if(i>=0&&i<o.length-1)go(o[i+1])}
+function back(){if(hist.length)show(hist.pop(),true)}
+function setModo(m){if($("seg").dataset.off==="true")return;modo=m;document.body.classList.toggle("atual",m==="atual");document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m));show(cur,false)}
+document.querySelectorAll("#seg button").forEach(b=>b.addEventListener("click",()=>setModo(b.dataset.m)));
+$("tgNotes").addEventListener("change",e=>document.body.classList.toggle("nonotes",!e.target.checked));
+
+function atualizaValores(){
+ const v=fmt(+$("rng").value),p=prazo+"x de "+fmt(parcela(),1);
+ document.querySelectorAll("[data-valor]").forEach(e=>e.textContent=v);
+ document.querySelectorAll("[data-parc]").forEach(e=>e.textContent=p);
+ document.querySelectorAll("[data-rp]").forEach(e=>e.textContent=p);
+ $("rp").textContent=p;
+ document.querySelectorAll("[data-sum]").forEach(e=>e.innerHTML="<span>Sua simulação</span><b>"+v+" em "+p+"</b>");
+ const pl=($("placa").value||$("placaA").value);$("rplaca").textContent=pl?"Placa "+pl:"Placa informada";
+}
+function sim(){$("val").textContent=fmt(+$("rng").value);$("parc").textContent=prazo+"x de "+fmt(parcela(),1);$("simErr").hidden=true;atualizaValores()}
+$("opts").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;prazo=+b.dataset.p;document.querySelectorAll("#opts button").forEach(x=>x.setAttribute("aria-pressed",x===b));sim()});
+function simErrDemo(){$("simErr").hidden=false}
+
+/* CPF: só valida o dígito verificador no navegador. Nada é consultado. */
+function maskCpf(e){const d=e.value.replace(/\D/g,"").slice(0,11);e.value=d.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");const w=e.closest(".ib-wrap");w.classList.remove("bad");w.classList.remove("okv");e.removeAttribute("aria-invalid")}
+function cpfOk(c){c=c.replace(/\D/g,"");if(c.length!==11||/^(\d)\1+$/.test(c))return false;for(let t=9;t<11;t++){let s=0;for(let i=0;i<t;i++)s+=+c[i]*(t+1-i);if(((s*10)%11)%10!==+c[t])return false}return true}
+function cpfMark(ok){const w=$("f-cpf");w.classList.toggle("bad",!ok);w.classList.toggle("okv",ok);if(ok)$("cpf").removeAttribute("aria-invalid");else $("cpf").setAttribute("aria-invalid","true")}
+function cpfBlur(){const v=$("cpf").value;if(v.replace(/\D/g,"").length===11)cpfMark(cpfOk(v))}
+function cpfNext(){const ok=cpfOk($("cpf").value);cpfMark(ok);if(ok)go("placa");else $("cpf").focus()}
+function cpfNextA(){if(!cpfOk($("cpfA").value)){$("f-cpfA").classList.add("bad");return}go("placa")}
+function demoCpfErr(){$("cpf").value="123.456.789-00";cpfMark(false);$("cpf").focus()}
+function demoCpfErrA(){$("cpfA").value="123.456.789-00";$("f-cpfA").classList.add("bad")}
+
+/* Placa: mesma máscara do site real (maiúsculas, 7 caracteres, hífen depois das 3 letras) */
+function maskPlaca(e){const v=e.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,7);e.value=v.replace(/^([A-Z]{3})([0-9A-Z]{1,4})$/,"$1-$2");e.closest(".ib-wrap").classList.remove("bad");e.removeAttribute("aria-invalid");$("placaAcao").hidden=true}
+const ERR_PROP={
+ INVALID_VEHICLE_PLATE:["Confira a placa: são 3 letras seguidas de 4 caracteres, como ABC-1D23 ou ABC-1234.",false],
+ NOT_ALLOWED_VEHICLE_MANUFACTURE_YEAR:["Este carro tem mais de 15 anos de fabricação e não pode ser usado como garantia. Se você tiver outro veículo quitado no seu nome, tente com ele.",true],
+ NOT_ALLOWED_VEHICLE_TYPE:["Este tipo de veículo não é aceito como garantia. Se você tiver outro veículo quitado no seu nome, tente com ele.",true],
+ NOT_ELIGIBLE_VEHICLE:["Não conseguimos usar este veículo: ele precisa estar quitado e no seu nome. Se você tiver outro veículo nessas condições, tente com ele.",true]};
+const ERR_ATUAL={INVALID_VEHICLE_PLATE:"Insira uma placa válida.",NOT_ALLOWED_VEHICLE_MANUFACTURE_YEAR:"Insira um veículo com até 15 anos de fabricação",NOT_ALLOWED_VEHICLE_TYPE:"Esse veículo não está disponível para financiamento."};
+function placaErr(c){const p=ERR_PROP[c];$("placa-err").textContent=p[0];$("f-placa").classList.add("bad");$("placa").setAttribute("aria-invalid","true");$("placaAcao").hidden=!p[1]}
+function placaErrA(c){$("placaA-err").textContent=ERR_ATUAL[c];$("f-placaA").classList.add("bad")}
+function placaOutro(){$("placa").value="";$("f-placa").classList.remove("bad");$("placaAcao").hidden=true;$("placa").focus()}
+function placaNext(){const v=$("placa").value.replace(/-/g,"");if(v&&!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(v)){placaErr("INVALID_VEHICLE_PLATE");$("placa").focus();return}next()}
+
+function maskTel(e){const d=e.value.replace(/\D/g,"").slice(0,11);e.value=d.length>6?d.replace(/^(\d{2})(\d{4,5})(\d{0,4}).*/,"($1) $2-$3"):d.length>2?d.replace(/^(\d{2})(\d*)/,"($1) $2"):d}
+function maskData(e){const d=e.value.replace(/\D/g,"").slice(0,8);e.value=d.replace(/^(\d{2})(\d)/,"$1/$2").replace(/^(\d{2}\/\d{2})(\d)/,"$1/$2")}
+function maskCep(e){const d=e.value.replace(/\D/g,"").slice(0,8);e.value=d.replace(/^(\d{5})(\d)/,"$1-$2");$("addrBox").hidden=d.length<8}
+function maeA(){const v=$("maeA").value;$("c-maeA").classList.toggle("bad",v.length>35)}
+function demoMae(){$("maeA").value="Maria Aparecida dos Santos Oliveira Pereira";maeA()}
+function dadosNext(){const n=$("nome").value.trim();if(n&&n.split(/\s+/).length<2){$("c-nome").classList.add("bad");$("nome").setAttribute("aria-invalid","true");$("nome").focus();return}$("c-nome").classList.remove("bad");$("nome").removeAttribute("aria-invalid");next()}
+
+function enviar(){const msgs=["Analisando sua proposta...","Enviando para a Porto...","Pronto!"];const L=$("loading");L.classList.add("on");let k=0;$("loadBar").style.width="0";
+ const tick=setInterval(()=>{k++;$("loadBar").style.width=Math.min(90,k*10)+"%";$("loadMsg").textContent=msgs[Math.min(2,Math.floor(k/4))];if(k>=10){clearInterval(tick);$("loadBar").style.width="100%";setTimeout(()=>{L.classList.remove("on");$("proto").textContent="CGV-"+String(Date.now()).slice(-7);go("fim")},500)}},150)}
+function demoSent(b){b.textContent="Pronto! (protótipo: nada foi enviado)";b.disabled=true}
+function waDemo(){$("live").textContent="Protótipo: o WhatsApp não é aberto.";const w=document.querySelector(".wa");w.animate([{transform:"scale(1)"},{transform:"scale(1.15)"},{transform:"scale(1)"}],{duration:400})}
+
+function mostraResume(){let s=null;try{s=localStorage.getItem("cgvproto_etapa")}catch(e){}const r=$("resume");if(s&&NOME[s]){$("resumeStep").textContent=NOME[s];r.hidden=false}else r.hidden=true}
+function resumeGo(){let s=null;try{s=localStorage.getItem("cgvproto_etapa")}catch(e){}if(s)go(s)}
+function resumeClear(){try{localStorage.removeItem("cgvproto_etapa")}catch(e){}$("resume").hidden=true}
+function restart(){resumeClear();hist=[];show("bv",true)}
+
+document.addEventListener("keydown",e=>{if(e.key!=="Enter"||e.target.tagName!=="INPUT"||e.target.type==="checkbox")return;const b=[...document.querySelectorAll(".step.on .foot .btn")].find(vis);if(b){e.preventDefault();b.click()}});
+
+(function init(){const h=location.hash.slice(1).split("/");if(h[1]==="atual"){modo="atual";document.body.classList.add("atual");document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m==="atual"))}
+ const s=document.querySelector('.step[data-s="'+h[0]+'"]')?h[0]:"bv";sim();show(s,false)})();
 </script>
 </body>
 </html>
