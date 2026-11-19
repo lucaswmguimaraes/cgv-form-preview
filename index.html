@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Protótipo – Empréstimo com garantia de veículo (proposta de melhorias)</title>
+<style>
+:root{--blue:#0046c0;--blue-d:#00297a;--ink:#111;--muted:#555;--line:#d9dde5;--ok:#0a7a4b;--err:#c62828;--soft:#eef3fd}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:#fff}
+.proto{position:sticky;top:0;z-index:20;background:#ffcc00;color:#222;font-size:13px;font-weight:700;text-align:center;padding:7px 10px}
+.proto label{font-weight:400;margin-left:12px;cursor:pointer}
+header{display:flex;align-items:center;justify-content:center;height:58px;border-bottom:1px solid var(--line);position:relative}
+header .back{position:absolute;left:14px;background:none;border:0;font-size:22px;color:var(--blue);cursor:pointer}
+.logo{font-weight:800;font-size:24px;color:var(--blue);letter-spacing:-.5px}
+.bar{height:4px;background:#e8ecf3}.bar i{display:block;height:4px;background:var(--blue);transition:width .3s}
+.wrap{display:grid;grid-template-columns:minmax(0,520px) 300px;gap:32px;justify-content:center;padding:28px 18px 120px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}.note{order:-1}}
+.step{display:none}.step.on{display:block}
+.eyebrow{font-size:13px;color:var(--blue);font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-bottom:8px}
+h1{font-size:30px;line-height:1.15;margin:0 0 12px}h1 em{font-style:normal;color:var(--blue)}
+h2{font-size:24px;color:var(--blue);margin:0 0 10px}
+p{line-height:1.5;margin:0 0 14px}.muted{color:var(--muted);font-size:14px}
+.field{margin:0 0 16px}.field label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.field input,.field select{width:100%;font-size:16px;padding:13px 14px;border:1px solid #9aa3b2;border-radius:8px;background:#fff}
+.field input:focus,.field select:focus{outline:2px solid var(--blue);border-color:var(--blue)}
+.field .help{font-size:13px;color:var(--muted);margin-top:5px}
+.field.bad input{border-color:var(--err)}.field .msg{display:none;color:var(--err);font-size:13px;margin-top:5px}.field.bad .msg{display:block}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{display:block;width:100%;border:0;border-radius:8px;background:var(--blue);color:#fff;font-weight:700;font-size:16px;padding:15px;cursor:pointer;margin-top:8px}
+.btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+.btn.link{background:none;color:var(--blue);text-decoration:underline;font-weight:600;padding:8px}
+.check{list-style:none;padding:0;margin:0 0 18px}.check li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #eef0f4;font-size:15px}
+.check li:before{content:"✓";color:#fff;background:var(--ok);border-radius:50%;width:20px;height:20px;flex:none;display:grid;place-items:center;font-size:12px;margin-top:1px}
+.box{background:var(--soft);border-radius:10px;padding:14px 16px;margin:0 0 18px;font-size:14px}
+.box.warn{background:#fff4e5}.box.err{background:#fdecec}
+.perks{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.perks span{background:#f3f5f9;border-radius:20px;padding:6px 12px;font-size:13px}
+.note{background:#fffbe6;border:1px dashed #d9b400;border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.45;align-self:start;position:sticky;top:110px}
+.note b{display:block;margin-bottom:6px;font-size:14px}.note ul{margin:6px 0 0 18px;padding:0}.note li{margin-bottom:5px}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:2px 6px;margin-right:4px}
+.t-cfg{background:#e6f5ee;color:#0a6b42}.t-tag{background:#e8eefc;color:#1d3f99}.t-dev{background:#fff1d6;color:#8a5a00}
+body.nonotes .note{display:none}body.nonotes .wrap{grid-template-columns:minmax(0,520px)}
+.sim{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.sim .big{font-size:28px;font-weight:800;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 14px}.opts button{padding:10px 0;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:600;cursor:pointer}.opts button.sel{border-color:var(--blue);background:var(--soft);color:var(--blue)}
+.sum div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eef0f4;font-size:15px}
+.priv{font-size:12.5px;color:var(--muted)}
+.wa{position:fixed;right:18px;bottom:18px;width:52px;height:52px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;font-weight:800;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="proto">PROTÓTIPO DE MELHORIAS – não preencha dados reais. Nada é enviado.
+  <label><input type="checkbox" id="tg" checked> mostrar notas</label></div>
+<header><button class="back" onclick="back()" aria-label="Voltar">←</button><span class="logo">Porto</span></header>
+<div class="bar"><i id="bar" style="width:0"></i></div>
+
+<div class="wrap">
+<main>
+
+<section class="step on" data-s="boas-vindas">
+  <h1>Crédito rápido com <em>taxa abaixo</em> do mercado</h1>
+  <p>Use seu carro quitado como garantia e receba seu dinheiro em até 48 horas.</p>
+  <div class="perks"><span>Taxas a partir de 1,30% a.m.</span><span>Até 60 meses</span><span>O carro fica com você</span></div>
+  <div class="box"><b>Antes de começar, confira se você pode simular:</b>
+    <ul class="check" style="margin:10px 0 0">
+      <li>Você tem uma oferta de crédito pré-aprovada na Porto (verificamos pelo CPF)</li>
+      <li>O carro está no seu nome e totalmente quitado</li>
+      <li>O carro tem até 15 anos de fabricação</li>
+      <li>Você tem até 75 anos</li>
+    </ul></div>
+  <p class="muted">Leva cerca de 3 minutos · 6 etapas</p>
+  <button class="btn" onclick="go('cpf')">Ver se tenho crédito pré-aprovado</button>
+</section>
+
+<section class="step" data-s="cpf">
+  <div class="eyebrow">Etapa 1 de 6</div>
+  <h2>Digite seu CPF para começar</h2>
+  <p>Vamos verificar se existe uma oferta de crédito pré-aprovada para você.</p>
+  <div class="field" id="f-cpf"><label for="cpf">CPF</label>
+    <input id="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14" oninput="maskCpf(this)">
+    <div class="msg">Confira os 11 números do CPF. Parece que algum dígito está diferente.</div></div>
+  <p class="priv">Ao continuar, você concorda com o tratamento dos seus dados conforme a Política de Privacidade.</p>
+  <button class="btn" onclick="cpfNext()">Continuar</button>
+  <button class="btn link" onclick="go('cpf-nao')">Ver como fica a tela de CPF não elegível</button>
+</section>
+
+<section class="step" data-s="cpf-nao">
+  <div class="eyebrow">Resultado da consulta</div>
+  <h2>Ainda não temos uma oferta pré-aprovada para este CPF</h2>
+  <p>A oferta de empréstimo com garantia de veículo depende de uma análise prévia do seu perfil. Isso pode mudar com o tempo.</p>
+  <div class="box"><b>Quer que a gente avise quando houver uma oferta para você?</b>
+    <div class="field" style="margin-top:10px"><label for="avise">E-mail</label><input id="avise" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"></div>
+    <button class="btn" onclick="alert('Protótipo: nada foi enviado.')">Quero ser avisado</button></div>
+  <p><b>Outras opções para você agora</b></p>
+  <button class="btn ghost">Empréstimo consignado</button>
+  <button class="btn ghost">Falar com um especialista no WhatsApp</button>
+  <button class="btn link" onclick="go('placa')">Seguir o protótipo (como se o CPF fosse aprovado)</button>
+</section>
+
+<section class="step" data-s="placa">
+  <div class="eyebrow">Etapa 2 de 6</div>
+  <h2>Qual é a placa do carro da garantia?</h2>
+  <div class="field" id="f-placa"><label for="placa">Placa</label>
+    <input id="placa" placeholder="ABC1D23" maxlength="8" style="text-transform:uppercase">
+    <div class="msg">Este carro tem mais de 15 anos de fabricação. Você pode tentar com outro veículo.</div></div>
+  <ul class="check"><li>No seu nome</li><li>Totalmente quitado</li><li>Com até 15 anos de fabricação</li></ul>
+  <button class="btn" onclick="go('simulacao')">Continuar</button>
+  <button class="btn link" onclick="document.getElementById('f-placa').classList.toggle('bad')">Ver erro de veículo com mais de 15 anos</button>
+</section>
+
+<section class="step" data-s="simulacao">
+  <div class="eyebrow">Etapa 3 de 6</div>
+  <h2>Quanto você precisa?</h2>
+  <div class="sim"><div class="muted">Valor do empréstimo</div><div class="big" id="val">R$ 30.000</div>
+    <input type="range" min="5000" max="80000" step="1000" value="30000" oninput="sim()" id="rng">
+    <div class="muted" style="display:flex;justify-content:space-between"><span>R$ 5 mil</span><span>Seu limite pré-aprovado: R$ 80 mil</span></div></div>
+  <div class="muted">Em quantas vezes?</div>
+  <div class="opts" id="opts"><button onclick="pz(24,this)">24x</button><button onclick="pz(36,this)">36x</button><button class="sel" onclick="pz(48,this)">48x</button><button onclick="pz(60,this)">60x</button></div>
+  <div class="box"><b id="parc">48x de R$ 0</b><span class="muted">Valores ilustrativos do protótipo. A proposta final depende de análise.</span></div>
+  <button class="btn" onclick="go('dados')">Continuar</button>
+</section>
+
+<section class="step" data-s="dados">
+  <div class="eyebrow">Etapa 4 de 6</div>
+  <h2>Para quem enviamos a proposta?</h2>
+  <div class="field"><label for="nome">Nome completo</label><input id="nome" autocomplete="name" placeholder="Como está no seu documento"></div>
+  <div class="field"><label for="cel">Celular com DDD</label><input id="cel" type="tel" autocomplete="tel-national" inputmode="numeric" placeholder="(11) 91234-5678"></div>
+  <div class="field"><label for="mail">E-mail</label><input id="mail" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"></div>
+  <div class="row">
+    <div class="field"><label for="nasc">Data de nascimento</label><input id="nasc" inputmode="numeric" placeholder="DD/MM/AAAA"></div>
+    <div class="field"><label for="sexo">Sexo</label><select id="sexo"><option>Selecione</option><option>Feminino</option><option>Masculino</option></select></div>
+  </div>
+  <div class="field"><label for="mae">Nome completo da mãe</label><input id="mae" placeholder="Como está no documento"><div class="help">Usado para confirmar sua identidade.</div></div>
+  <div class="field"><label for="ocup">Profissão</label><select id="ocup"><option>Selecione</option><option>Assalariado(a)</option><option>Autônomo(a)</option><option>Empresário(a)</option><option>Aposentado(a)</option></select></div>
+  <button class="btn" onclick="go('cep')">Continuar</button>
+</section>
+
+<section class="step" data-s="cep">
+  <div class="eyebrow">Etapa 5 de 6</div>
+  <h2>Qual é o seu endereço?</h2>
+  <div class="field"><label for="cepi">CEP</label><input id="cepi" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000"><div class="help">Preenchemos rua, bairro e cidade para você.</div></div>
+  <div class="row"><div class="field"><label>Número</label><input inputmode="numeric"></div><div class="field"><label>Complemento</label><input placeholder="Opcional"></div></div>
+  <div class="box">Pronto: com isso já conseguimos falar com você se precisar de ajuda para concluir.</div>
+  <button class="btn" onclick="go('banco')">Continuar</button>
+</section>
+
+<section class="step" data-s="banco">
+  <div class="eyebrow">Etapa 6 de 6</div>
+  <h2>Em qual conta você quer receber <span id="vb">R$ 30.000</span>?</h2>
+  <p class="muted">A conta precisa estar no seu nome. Usamos estes dados só para o depósito.</p>
+  <div class="field"><label>Banco</label><select><option>Selecione o banco</option><option>Porto Bank</option><option>Outro banco</option></select></div>
+  <div class="row"><div class="field"><label>Agência</label><input inputmode="numeric" placeholder="0000"></div><div class="field"><label>Conta com dígito</label><input inputmode="numeric" placeholder="00000-0"></div></div>
+  <button class="btn" onclick="go('resumo')">Revisar proposta</button>
+</section>
+
+<section class="step" data-s="resumo">
+  <h2>Revise a sua simulação</h2>
+  <p class="muted">O contrato só é fechado depois da aprovação.</p>
+  <div class="sum"><div><span>Valor</span><b id="rv">R$ 30.000</b></div><div><span>Parcelas</span><b id="rp">48x</b></div><div><span>Garantia</span><b>Placa informada</b></div></div>
+  <button class="btn" style="margin-top:18px" onclick="go('fim')">Enviar proposta para análise</button>
+</section>
+
+<section class="step" data-s="fim">
+  <h2>Proposta enviada para análise</h2>
+  <p>Você recebe o retorno por e-mail e WhatsApp. Fim do protótipo.</p>
+  <button class="btn ghost" onclick="go('boas-vindas')">Recomeçar</button>
+</section>
+
+</main>
+
+<aside class="note" id="note"></aside>
+</div>
+<a class="wa" href="#" onclick="return false" title="WhatsApp">WA</a>
+
+<script>
+const NOTES={
+"boas-vindas":["Boas-vindas: requisitos antes do CPF",["<span class='tag t-cfg'>config</span>Hoje os requisitos do carro só aparecem na etapa da placa, depois do CPF. Mostrá-los aqui evita que quem não se encaixa digite o CPF e seja reprovado.","<span class='tag t-cfg'>config</span>Deixa claro que o CPF precisa ter oferta pré-aprovada, a principal causa de reprovação.","<span class='tag t-cfg'>config</span>Tempo estimado e nº de etapas reduzem abandono em formulários longos (Baymard/CXL).","<span class='tag t-cfg'>config</span>CTA mais específico que 'Simular agora'."]],
+"cpf":["CPF: expectativa e erro claro",["<span class='tag t-cfg'>config</span>'Etapa 1 de 6' além da barra de progresso.","<span class='tag t-cfg'>config</span>Texto explica por que pedimos o CPF.","<span class='tag t-dev'>dev leve</span>Rótulo fixo acima do campo e mensagem de erro que diz o que corrigir."]],
+"cpf-nao":["CPF não elegível: não perder a pessoa",["Hoje a tela mostra só produtos recomendados. A pessoa sai sem deixar contato.","<span class='tag t-dev'>dev</span>Captura de e-mail 'avise-me' (exige integração com CRM).","<span class='tag t-cfg'>config</span>WhatsApp como saída visível.","<span class='tag t-tag'>tag</span>Medir com o evento alert (alert_code NOT_ELIGIBLE) que já existe."]],
+"placa":["Placa: erro que orienta",["Mantém o checklist que já existe.","<span class='tag t-cfg'>config</span>Mensagens por motivo (já configuradas: +15 anos, placa inválida, tipo de veículo) e opção de tentar outro carro."]],
+"simulacao":["Simulação",["Sem mudança estrutural: mostrar o limite pré-aprovado evita o erro 'valor acima do pré-aprovado'.","<span class='tag t-tag'>tag</span>add_to_cart já é enviado no 'Continuar'."]],
+"dados":["Dados pessoais antes dos bancários",["<span class='tag t-cfg'>config</span>Hoje a ordem é Simulação → Dados bancários → Dados pessoais → CEP. O lead (contato) só é gravado no CEP, depois dos dados bancários.","<span class='tag t-cfg'>config</span>Inverter: pessoais → CEP → bancários grava o contato 1 etapa antes do campo mais sensível (conta bancária).","<span class='tag t-cfg'>config</span>Corrige placeholders em inglês ('Enter text...') de Nome da mãe, E-mail e Celular.","Contato primeiro (nome, celular, e-mail), dados de cadastro depois."]],
+"cep":["CEP: lead gravado aqui",["É aqui que o serviço de lead roda hoje. Com a nova ordem, ele roda antes dos dados bancários.","<span class='tag t-tag'>tag</span>Evento lead dispara aqui e pode alimentar remarketing de quem abandona depois."]],
+"banco":["Dados bancários por último",["Campo mais sensível vem depois do vínculo criado.","<span class='tag t-cfg'>config</span>Agência e conta já validadas pelo motor (4 dígitos; 5 a 10 dígitos)."]],
+"resumo":["Resumo",["Sem mudança."]],
+"fim":["Fim",["Sem mudança."]]};
+const ORDER=["boas-vindas","cpf","placa","simulacao","dados","cep","banco","resumo","fim"];
+let hist=[],cur="boas-vindas",prazo=48;
+function show(s){document.querySelectorAll('.step').forEach(e=>e.classList.toggle('on',e.dataset.s===s));cur=s;
+ const i=ORDER.indexOf(s);document.getElementById('bar').style.width=(i<0?15:Math.round(i/(ORDER.length-1)*100))+'%';
+ const n=NOTES[s];document.getElementById('note').innerHTML='<b>O que muda nesta etapa: '+n[0]+'</b><ul>'+n[1].map(x=>'<li>'+x+'</li>').join('')+'</ul><p style="margin-top:10px;font-size:12px"><span class="tag t-cfg">config</span>configuração da jornada <span class="tag t-tag">tag</span>GTM/GA4 <span class="tag t-dev">dev</span>desenvolvimento</p>';
+ window.scrollTo(0,0);if(s==='simulacao')sim();if(s==='banco')document.getElementById('vb').textContent=fmt(+rng.value);if(s==='resumo'){rv.textContent=fmt(+rng.value);rp.textContent=prazo+'x de '+fmt(parcela())}}
+function go(s){hist.push(cur);show(s)}
+function back(){if(hist.length)show(hist.pop())}
+function fmt(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0})}
+function parcela(){const i=0.0179,v=+rng.value;return v*i/(1-Math.pow(1+i,-prazo))}
+function sim(){val.textContent=fmt(+rng.value);parc.textContent=prazo+'x de '+fmt(parcela())}
+function pz(n,b){prazo=n;document.querySelectorAll('#opts button').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sim()}
+function maskCpf(e){let d=e.value.replace(/\D/g,'').slice(0,11);e.value=d.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');document.getElementById('f-cpf').classList.remove('bad')}
+function cpfNext(){const d=cpf.value.replace(/\D/g,'');if(d.length!==11){document.getElementById('f-cpf').classList.add('bad');return}go('placa')}
+document.getElementById('tg').onchange=e=>document.body.classList.toggle('nonotes',!e.target.checked);
+const rng=document.getElementById('rng');show('boas-vindas');
+</script>
+</body>
+</html>
