@@ -200,6 +200,15 @@ h1[tabindex="-1"]:focus-visible,h2[tabindex="-1"]:focus-visible{outline:none}
 .steps3 b{display:block;font-size:16px;line-height:24px}
 .banner{display:flex;gap:12px;align-items:flex-start;background:var(--n200);border-radius:8px;padding:16px;font:14px/20px var(--fb)}
 .banner svg{width:32px;height:32px;flex:none}
+.banner a{color:var(--s900);font-weight:700}
+.recusa{display:flex;gap:14px;align-items:flex-start;background:var(--s100);border:1px solid var(--s900);border-radius:8px;padding:16px;margin-top:-8px}
+.recusa>svg{width:32px;height:32px;flex:none;color:var(--s900)}
+.recusa>div{display:flex;flex-direction:column;gap:12px;min-width:0;flex:1}
+.recusa b{font:700 16px/24px var(--fb);color:var(--n900)}
+.recusa p{margin:-8px 0 0;font:14px/20px var(--fb);color:var(--n800)}
+.recusa .btn{width:auto;align-self:flex-start;padding:0 28px}
+.lnk{align-self:flex-start;background:none;border:0;padding:0;font:600 14px/20px var(--fb);color:var(--s900);text-decoration:underline;cursor:pointer;text-align:left}
+@media (max-width:767px){.recusa .btn{width:100%;align-self:stretch}}
 
 /* Tela de carregamento (loadingScreen da configuração) */
 .loading{position:fixed;inset:0;z-index:70;background:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px}
@@ -441,7 +450,15 @@ body.cc .step .t-title{color:#000}
    <div class="ib-help" id="placa-help">Vale placa Mercosul (ABC-1D23) ou modelo antigo (ABC-1234).</div>
    <div class="ib-err" id="placa-err" role="alert"></div>
   </div>
-  <div id="placaAcao" data-m="M11" hidden><button class="btn stroke" type="button" onclick="placaOutro()">Tentar com outro veículo</button></div>
+  <div id="placaAcao" class="recusa" data-m="M11" role="group" aria-labelledby="recusa-t" hidden>
+   <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-4.5l2.6-6A2 2 0 0 1 9.4 8.3h13.2a2 2 0 0 1 1.8 1.2l2.6 6V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><path d="M5 15.5h22"/><circle cx="10" cy="21.5" r="2.2"/><circle cx="22" cy="21.5" r="2.2"/><path d="M27 4v6M24 7h6"/></svg>
+   <div>
+    <b id="recusa-t">Tem outro veículo quitado no seu nome?</b>
+    <p>Você pode incluir outro veículo agora e seguir com a simulação. O que você já preencheu continua salvo.</p>
+    <button class="btn" type="button" onclick="placaOutro()">Incluir outro veículo</button>
+    <button class="lnk" type="button" onclick="waDemo()">Não tenho outro veículo: falar com um especialista</button>
+   </div>
+  </div>
   <p class="body1">Para dar certo, o veículo precisa estar:</p>
   <ul class="list" style="margin-top:-16px">
    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>No seu nome</li>
@@ -600,6 +617,7 @@ body.cc .step .t-title{color:#000}
     <li><b>Contato da Porto</b>Falamos com você por e-mail ou telefone, no celular que você informou, com os próximos passos.</li>
     <li><b>Contrato e dinheiro na conta</b>Com a aprovação, você revisa e assina o contrato. O valor cai na conta informada.</li>
    </ol></div>
+  <div class="banner" data-m="M15"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="9" y="3" width="14" height="26" rx="2.5"/><path d="M14 25.5h4"/></svg><div><b>Baixe o App Porto</b><br>Gerencie seu empréstimo Porto Bank em um só lugar.<br><a href="#" onclick="return false">Baixar agora</a></div></div>
   <div class="card"><div class="r"><span>Valor do crédito</span><b data-valor>R$ 30.000</b></div><div class="r"><span>Parcelas</span><b data-rp>48x</b></div></div>
   <div class="btns"><button class="btn" type="button" onclick="waDemo()">Tirar dúvidas no WhatsApp</button><button class="btn ghost" type="button">Conheça outros produtos</button></div>
   <div class="demo"><b>Protótipo:</b><button type="button" onclick="restart()">recomeçar</button></div>
@@ -762,7 +780,7 @@ cpfnao:["CPF sem oferta: não perder a pessoa",[
 placa:["Placa: rótulo claro e erro que orienta",[
  T.cfg+N("M10","Rótulo \"Placa do veículo\" e exemplo dos dois formatos. Hoje o rótulo configurado é \"ABC 0X00\".",1),
  T.ok+"A máscara já aceita placa Mercosul e modelo antigo e converte para maiúsculas.",
- T.cfg+N("M11","Mensagem por código com próximo passo e botão \"Tentar com outro veículo\". Use os botões amarelos para comparar Atual × Proposto.",1),
+ T.cfg+N("M11","Mensagem por código com o motivo da recusa e um quadro em destaque com o botão principal \"Incluir outro veículo\": limpa a placa e mantém o que já foi preenchido. Sem isso, a pessoa tende a apagar a placa e desistir. Quem não tem outro veículo ganha a saída para o especialista. Use os botões amarelos para comparar Atual × Proposto.",1),
  T.ok+"Checklist dos requisitos do veículo (mantido)."]],
 sim:["Simulação: limite visível",[
  T.dev+N("M7","Mostrar o limite pré-aprovado. Vira configuração se o dado já vier da consulta do CPF."),
@@ -789,7 +807,7 @@ banco:["Dados bancários por último",[
  T.ok+"Agência (4 dígitos) e conta (5 a 10 dígitos) já validadas."]],
 resumo:["Revisão",["Sem mudança. As mensagens de carregamento (\"Analisando sua proposta...\") vêm da configuração real."]],
 fim:["Proposta enviada: próximos passos",[
- T.devl+N("M15","Texto fixo no componente. Proposta: protocolo, o que acontece agora em 3 passos e WhatsApp como ação principal. Hoje a ação principal é \"Conheça outros produtos\".",1),
+ T.devl+N("M15","Texto fixo no componente. Proposta: protocolo, o que acontece agora em 3 passos e WhatsApp como ação principal. Hoje a ação principal é \"Conheça outros produtos\". O aviso \"Baixe o App Porto\" continua nesta etapa, como hoje.",1),
  "O protocolo do protótipo é fictício."]]
 };
 let modo="prop",cur="bv",prazo=48,idx=0,lastPorto="bv";
@@ -905,17 +923,20 @@ function demoCpfErr(){$("cpf").value="123.456.789-00";cpfMark(false);$("cpf").fo
 function demoCpfErrA(){$("cpfA").value="123.456.789-00";$("f-cpfA").classList.add("bad")}
 
 /* Placa: mesma máscara do site real (maiúsculas, 7 caracteres, hífen depois das 3 letras) */
-function maskPlaca(e){const v=e.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,7);e.value=v.replace(/^([A-Z]{3})([0-9A-Z]{1,4})$/,"$1-$2");e.closest(".ib-wrap").classList.remove("bad");e.removeAttribute("aria-invalid");$("placaAcao").hidden=true}
+function maskPlaca(e){const v=e.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,7);e.value=v.replace(/^([A-Z]{3})([0-9A-Z]{1,4})$/,"$1-$2");e.closest(".ib-wrap").classList.remove("bad");e.removeAttribute("aria-invalid")}
 const ERR_PROP={
  INVALID_VEHICLE_PLATE:["Confira a placa: são 3 letras seguidas de 4 caracteres, como ABC-1D23 ou ABC-1234.",false],
- NOT_ALLOWED_VEHICLE_MANUFACTURE_YEAR:["Este carro tem mais de 15 anos de fabricação e não pode ser usado como garantia. Se você tiver outro veículo quitado no seu nome, tente com ele.",true],
- NOT_ALLOWED_VEHICLE_TYPE:["Este tipo de veículo não é aceito como garantia. Se você tiver outro veículo quitado no seu nome, tente com ele.",true],
- NOT_ELIGIBLE_VEHICLE:["Não conseguimos usar este veículo: ele precisa estar quitado e no seu nome. Se você tiver outro veículo nessas condições, tente com ele.",true]};
+ NOT_ALLOWED_VEHICLE_MANUFACTURE_YEAR:["Este veículo tem mais de 15 anos de fabricação e não pode ser usado como garantia.",true],
+ NOT_ALLOWED_VEHICLE_TYPE:["Este tipo de veículo não é aceito como garantia.",true],
+ NOT_ELIGIBLE_VEHICLE:["Não conseguimos usar este veículo: ele precisa estar quitado e no seu nome.",true]};
 const ERR_ATUAL={INVALID_VEHICLE_PLATE:"Insira uma placa válida.",NOT_ALLOWED_VEHICLE_MANUFACTURE_YEAR:"Insira um veículo com até 15 anos de fabricação",NOT_ALLOWED_VEHICLE_TYPE:"Esse veículo não está disponível para financiamento."};
-function placaErr(c){const p=ERR_PROP[c];$("placa-err").textContent=p[0];$("f-placa").classList.add("bad");$("placa").setAttribute("aria-invalid","true");$("placaAcao").hidden=!p[1]}
+let placaRecusada=null;
+function placaErr(c){const p=ERR_PROP[c];$("placa-err").textContent=p[0];$("f-placa").classList.add("bad");$("placa").setAttribute("aria-invalid","true");$("placaAcao").hidden=!p[1];placaRecusada=p[1]?$("placa").value:null;$("placa-help").textContent=PLACA_HELP}
 function placaErrA(c){$("placaA-err").textContent=ERR_ATUAL[c];$("f-placaA").classList.add("bad")}
-function placaOutro(){$("placa").value="";$("f-placa").classList.remove("bad");$("placaAcao").hidden=true;$("placa").focus()}
-function placaNext(){const v=$("placa").value.replace(/-/g,"");if(v&&!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(v)){placaErr("INVALID_VEHICLE_PLATE");$("placa").focus();return}next()}
+const PLACA_HELP="Vale placa Mercosul (ABC-1D23) ou modelo antigo (ABC-1234).";
+/* Recusa: o quadro "Incluir outro veículo" fica visível enquanto a pessoa edita; some só ao trocar de veículo ou ao seguir com outra placa */
+function placaOutro(){placaRecusada=null;$("placa").value="";$("f-placa").classList.remove("bad");$("placa").removeAttribute("aria-invalid");$("placaAcao").hidden=true;$("placa-help").textContent="Digite a placa do outro veículo. Os dados que você já informou continuam salvos.";$("live").textContent="Campo da placa limpo. Digite a placa do outro veículo.";$("placa").focus()}
+function placaNext(){const v=$("placa").value.replace(/-/g,"");if(placaRecusada!==null&&$("placa").value===placaRecusada){$("f-placa").classList.add("bad");$("placaAcao").querySelector(".btn").focus();return}if(v&&!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(v)){placaErr("INVALID_VEHICLE_PLATE");$("placa").focus();return}placaRecusada=null;$("placaAcao").hidden=true;next()}
 
 function maskTel(e){const d=e.value.replace(/\D/g,"").slice(0,11);e.value=d.length>6?d.replace(/^(\d{2})(\d{4,5})(\d{0,4}).*/,"($1) $2-$3"):d.length>2?d.replace(/^(\d{2})(\d*)/,"($1) $2"):d}
 function maskData(e){const d=e.value.replace(/\D/g,"").slice(0,8);e.value=d.replace(/^(\d{2})(\d)/,"$1/$2").replace(/^(\d{2}\/\d{2})(\d)/,"$1/$2")}
