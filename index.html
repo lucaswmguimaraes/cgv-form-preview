@@ -31,6 +31,9 @@ a{color:var(--s900)}
 .seg button[aria-pressed=true]{background:#222;color:#ffcc00}
 .seg[data-off=true]{opacity:.45}.seg[data-off=true] button{cursor:not-allowed}
 .proto small{font-weight:400}
+.ctrls{display:inline-flex;gap:8px 14px;align-items:center;flex-wrap:wrap;justify-content:center}
+.ctrl-btn{display:none;border:1px solid #222;background:#fff;border-radius:999px;padding:3px 10px;font:700 12px/1.2 var(--fb);color:#222;cursor:pointer}
+@media(max-width:767px){.proto{font-size:12px;line-height:16px;padding:6px 10px}.ctrl-btn{display:inline-block}.ctrls{display:none;width:100%}body.ctrl-open .ctrls{display:flex}}
 
 /* ===== Header real: grid 3 colunas, 60px, borda neutral-400 ===== */
 .hd{display:grid;grid-template-columns:repeat(3,1fr);align-items:center;height:60px;padding:0 10px;border-bottom:1px solid var(--n400);background:#fff}
@@ -208,6 +211,19 @@ h1[tabindex="-1"]:focus-visible,h2[tabindex="-1"]:focus-visible{outline:none}
 .wa:hover{transform:scale(1.1)}.wa svg{width:26px;height:26px}
 body.bv .wa{display:none}
 
+/* Melhorias: selos e destaque */
+.mbadges{position:absolute;top:-11px;right:-6px;z-index:16;display:flex;gap:4px}
+.mbadge{border:0;border-radius:999px;background:#ff7a00;color:#fff;font:700 11px/1 var(--fb);padding:4px 7px;cursor:pointer;box-shadow:0 1px 3px #0004}
+.mbadge:hover{background:#d95f00}
+.mk{outline:2px dashed #ff7a00;outline-offset:5px;border-radius:6px}
+.hl-m{outline:3px solid #ff7a00!important;outline-offset:6px;border-radius:8px;animation:hlp 1.1s ease-out 4}
+@keyframes hlp{0%{box-shadow:0 0 0 0 #ff7a00aa}100%{box-shadow:0 0 0 16px #ff7a0000}}
+.hl-tag{position:absolute;left:-6px;top:-12px;transform:translateY(-100%);z-index:17;background:#ff7a00;color:#fff;font:700 12px/1.2 var(--fb);padding:5px 9px;border-radius:6px;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 6px #0003;pointer-events:none}
+.mlink{border:0;background:#ff7a00;color:#fff;font:700 11px/1 var(--fb);border-radius:4px;padding:3px 6px;cursor:pointer;margin-right:2px}
+.mlink:hover{background:#d95f00}
+.note li.flash{background:#ffe2c4;border-radius:6px;transition:background .4s}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;background:#222;color:#fff;font:600 13px/1.4 var(--fb);padding:10px 16px;border-radius:8px;max-width:92vw;box-shadow:0 4px 14px #0004}
+
 /* Concorrentes: estrutura da 1a etapa no visual neutro do protótipo (sem identidade visual do concorrente) */
 .proto select{font:600 12.5px/1.2 var(--fb);border:1px solid #222;border-radius:999px;padding:3px 8px;background:#fff;color:#222;max-width:230px}
 .cc-chip{grid-column:2;justify-self:center;display:none;font:700 13px/1 var(--fb);color:var(--n800);background:var(--n200);border:1px solid var(--n400);border-radius:999px;padding:8px 14px;white-space:nowrap}
@@ -256,8 +272,11 @@ body.cc .step .t-title{color:#000}
 <body class="bv no-bar">
 <div class="proto" role="region" aria-label="Aviso do protótipo">
   <span>PROTÓTIPO DE MELHORIAS – não preencha dados reais. Nada é enviado.</span>
-  <span style="display:inline-flex;gap:14px;align-items:center;flex-wrap:wrap">
+  <button type="button" class="ctrl-btn" id="ctrlBtn" aria-expanded="false" aria-controls="ctrls">Controles ▾</button>
+  <span id="ctrls" class="ctrls">
     <label><input type="checkbox" id="tgNotes" checked> mostrar notas</label>
+    <label><input type="checkbox" id="tgMarks"> marcar melhorias na tela</label>
+    <label>Ir para <select id="selM" aria-label="Ir para uma melhoria"><option value="">melhoria…</option></select></label>
     <span class="seg" id="seg" role="group" aria-label="Versão exibida"><button type="button" data-m="prop" aria-pressed="true">Proposto</button><button type="button" data-m="atual" aria-pressed="false">Atual</button></span>
     <small id="segInfo"></small>
     <label>Ver <select id="selView" aria-label="Escolher o que ver">
@@ -298,11 +317,11 @@ body.cc .step .t-title{color:#000}
    <li><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 21.5v-5l3-1.5 3.5-5h11l4 5 3.5 1v5.5H27"/><path d="M8.5 21.5h10"/><circle cx="6.5" cy="21.5" r="2.3"/><circle cx="23.5" cy="21.5" r="2.3"/><path d="M11 15h13"/></svg>O carro fica com você</li>
   </ul>
   <div class="v-prop stack" style="gap:24px">
-   <div class="resume" id="resume" hidden>
+   <div class="resume" id="resume" data-m="M16" hidden>
     <span><b>Você já começou uma simulação.</b> Continue de onde parou: <span id="resumeStep"></span>.</span>
     <div class="row2"><button class="btn" type="button" onclick="resumeGo()">Continuar simulação</button><button class="btn ghost" type="button" onclick="resumeClear()">Começar de novo</button></div>
    </div>
-   <div class="req">
+   <div class="req" data-m="M1">
     <b>Antes de começar, confira se você pode simular:</b>
     <ul>
      <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>Você precisa ter uma oferta de crédito pré-aprovada na Porto (verificamos pelo CPF)</li>
@@ -311,10 +330,10 @@ body.cc .step .t-title{color:#000}
      <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>Você tem até 75 anos</li>
     </ul>
    </div>
-   <p class="body1 muted-w" style="font-size:14px;line-height:20px">Leva cerca de 3 minutos · 6 etapas</p>
+   <p class="body1 muted-w" data-m="M4" style="font-size:14px;line-height:20px">Leva cerca de 3 minutos · 6 etapas</p>
   </div>
   <div class="fixed-bottom">
-   <button class="btn v-prop" type="button" onclick="next()">Ver se tenho crédito pré-aprovado</button>
+   <span class="mwrap v-prop" data-m="M5" style="display:block"><button class="btn" type="button" onclick="next()">Ver se tenho crédito pré-aprovado</button></span>
    <button class="btn v-atual" type="button" onclick="next()">Simular agora</button>
   </div>
  </div>
@@ -323,17 +342,17 @@ body.cc .step .t-title{color:#000}
 <!-- ================= CPF ================= -->
 <section class="step" data-s="cpf" aria-labelledby="h-cpf">
  <div class="stack v-prop">
-  <p class="eyebrow" data-eyebrow></p>
+  <p class="eyebrow" data-eyebrow data-m="M4"></p>
   <h2 class="t-title" id="h-cpf" tabindex="-1">Digite seu CPF para começar</h2>
-  <p class="t-p">Vamos verificar se existe uma oferta de crédito pré-aprovada para você.</p>
-  <div class="ib-wrap" id="f-cpf">
+  <p class="t-p" data-m="M5">Vamos verificar se existe uma oferta de crédito pré-aprovada para você.</p>
+  <div class="ib-wrap" id="f-cpf" data-m="M8 M11">
    <label class="lbl" for="cpf">CPF</label>
    <input class="ib" id="cpf" type="text" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14" aria-describedby="cpf-err" oninput="maskCpf(this)" onblur="cpfBlur()">
    <svg class="ib-icon alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg>
    <svg class="ib-icon check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
    <div class="ib-err" id="cpf-err" role="alert">Confira os 11 números do CPF. Algum dígito parece diferente.</div>
   </div>
-  <div class="trust">
+  <div class="trust" data-m="M14">
    <div><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="9" width="12" height="8.5" rx="1.5"/><path d="M6.5 9V6.5a3.5 3.5 0 0 1 7 0V9"/></svg>Simular não gera compromisso: o contrato só é fechado depois da aprovação.</div>
    <div><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2.5l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L2.8 7.8l5-.7z"/></svg>Porto, há mais de 80 anos no mercado <span class="caption">(texto ilustrativo: a Porto valida a prova social)</span></div>
   </div>
@@ -358,14 +377,14 @@ body.cc .step .t-title{color:#000}
 <!-- ================= CPF SEM OFERTA ================= -->
 <section class="step" data-s="cpfnao" aria-labelledby="h-cpfnao">
  <div class="stack v-prop">
-  <h2 class="t-title" id="h-cpfnao" tabindex="-1">Ainda não temos uma oferta pré-aprovada para este CPF</h2>
+  <h2 class="t-title" id="h-cpfnao" tabindex="-1" data-m="M11">Ainda não temos uma oferta pré-aprovada para este CPF</h2>
   <p class="t-p">O empréstimo com garantia de veículo depende de uma análise prévia do seu perfil, que é atualizada com o tempo.</p>
-  <div class="ci" style="margin-top:-8px">
+  <div class="ci" style="margin-top:-8px" data-m="M6">
    <p class="body1" style="font-weight:700;margin-bottom:12px">Quer que a gente avise quando houver uma oferta para você?</p>
    <div class="box"><input id="avise" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nome@exemplo.com"><label class="fl" for="avise">E-mail</label></div>
   </div>
   <button class="btn" type="button" onclick="demoSent(this)">Quero ser avisado</button>
-  <div class="btns">
+  <div class="btns" data-m="M6">
    <p class="body1" style="font-weight:700">Outras opções para você agora</p>
    <button class="btn stroke" type="button">Empréstimo consignado</button>
    <button class="btn stroke" type="button" onclick="waDemo()">Falar com um especialista no WhatsApp</button>
@@ -385,16 +404,16 @@ body.cc .step .t-title{color:#000}
 <!-- ================= PLACA ================= -->
 <section class="step" data-s="placa" aria-labelledby="h-placa">
  <div class="stack v-prop">
-  <p class="eyebrow" data-eyebrow></p>
+  <p class="eyebrow" data-eyebrow data-m="M4"></p>
   <h2 class="t-title" id="h-placa" tabindex="-1">Informe a placa do veículo para a garantia</h2>
-  <div class="ib-wrap" id="f-placa">
+  <div class="ib-wrap" id="f-placa" data-m="M10 M11">
    <label class="lbl" for="placa">Placa do veículo</label>
    <input class="ib" id="placa" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="ABC-1D23" maxlength="8" aria-describedby="placa-help placa-err" oninput="maskPlaca(this)">
    <svg class="ib-icon alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg>
    <div class="ib-help" id="placa-help">Vale placa Mercosul (ABC-1D23) ou modelo antigo (ABC-1234).</div>
    <div class="ib-err" id="placa-err" role="alert"></div>
   </div>
-  <div id="placaAcao" hidden><button class="btn stroke" type="button" onclick="placaOutro()">Tentar com outro veículo</button></div>
+  <div id="placaAcao" data-m="M11" hidden><button class="btn stroke" type="button" onclick="placaOutro()">Tentar com outro veículo</button></div>
   <p class="body1">Para dar certo, o veículo precisa estar:</p>
   <ul class="list" style="margin-top:-16px">
    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>No seu nome</li>
@@ -425,19 +444,19 @@ body.cc .step .t-title{color:#000}
 <!-- ================= SIMULAÇÃO ================= -->
 <section class="step" data-s="sim" aria-labelledby="h-sim">
  <div class="stack">
-  <p class="eyebrow v-prop" data-eyebrow></p>
+  <p class="eyebrow v-prop" data-eyebrow data-m="M4"></p>
   <h2 class="t-title" id="h-sim" tabindex="-1">Vamos simular o empréstimo</h2>
   <div class="sim">
    <label class="lab" for="rng">Quanto você precisa?</label>
    <div class="big" id="val">R$ 30.000</div>
    <input type="range" id="rng" min="5000" max="80000" step="1000" value="30000" oninput="sim()" aria-describedby="limite">
-   <div class="ends"><span>R$ 5 mil</span><span id="limite"><span class="v-prop">Seu limite pré-aprovado: <b>R$ 80 mil</b></span><span class="v-atual">&nbsp;</span></span></div>
+   <div class="ends"><span>R$ 5 mil</span><span id="limite" data-m="M7"><span class="v-prop">Seu limite pré-aprovado: <b>R$ 80 mil</b></span><span class="v-atual">&nbsp;</span></span></div>
    <span class="lab" id="lbPz">Em quantas vezes?</span>
    <div class="opts" role="group" aria-labelledby="lbPz" id="opts"><button type="button" data-p="24" aria-pressed="false">24x</button><button type="button" data-p="36" aria-pressed="false">36x</button><button type="button" data-p="48" aria-pressed="true">48x</button><button type="button" data-p="60" aria-pressed="false">60x</button></div>
    <div class="parc" id="parc">48x de R$ 0</div>
    <span class="caption">Valores ilustrativos do protótipo. A taxa e a proposta final dependem de análise.</span>
   </div>
-  <div class="notif danger" id="simErr" hidden role="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg><span class="v-prop"><b>Esse valor passa do seu limite pré-aprovado.</b>Seu limite é de R$ 80.000. Escolha um valor até esse limite para continuar.</span><span class="v-atual">O valor solicitado é maior que o crédito pré-aprovado.</span></div>
+  <div class="notif danger" id="simErr" data-m="M11" hidden role="alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 16.5v.5"/></svg><span class="v-prop"><b>Esse valor passa do seu limite pré-aprovado.</b>Seu limite é de R$ 80.000. Escolha um valor até esse limite para continuar.</span><span class="v-atual">O valor solicitado é maior que o crédito pré-aprovado.</span></div>
   <div class="ph-legal">[Aviso da Porto sobre análise da proposta, como está hoje]</div>
   <div class="demo"><b>Protótipo:</b><button type="button" onclick="simErrDemo()">ver erro de valor acima do pré-aprovado</button></div>
   <div class="foot"><button class="btn" type="button" onclick="next()">Continuar</button></div>
@@ -447,20 +466,20 @@ body.cc .step .t-title{color:#000}
 <!-- ================= DADOS PESSOAIS ================= -->
 <section class="step" data-s="dados" aria-labelledby="h-dados">
  <div class="stack v-prop">
-  <p class="eyebrow" data-eyebrow></p>
+  <p class="eyebrow" data-eyebrow data-m="M2 M4"></p>
   <h2 class="t-title" id="h-dados" tabindex="-1">Para quem enviamos a proposta?</h2>
-  <div class="chip-sum" data-sum></div>
+  <div class="chip-sum" data-sum data-m="M13"></div>
   <div class="fields">
-   <div class="ci" id="c-nome"><div class="box"><input id="nome" autocomplete="name" autocapitalize="words" maxlength="60" placeholder="Como está no seu documento" aria-describedby="nome-err"><label class="fl" for="nome">Nome completo</label></div><div class="err" id="nome-err">Escreva seu nome e sobrenome.</div></div>
+   <div class="ci" id="c-nome" data-m="M9"><div class="box"><input id="nome" autocomplete="name" autocapitalize="words" maxlength="60" placeholder="Como está no seu documento" aria-describedby="nome-err"><label class="fl" for="nome">Nome completo</label></div><div class="err" id="nome-err">Escreva seu nome e sobrenome.</div></div>
    <label class="chk"><input type="checkbox" id="temSocial" onchange="document.getElementById('c-social').hidden=!this.checked">Tenho nome social</label>
    <div class="ci" id="c-social" hidden><div class="box"><input id="social" autocomplete="nickname" maxlength="60" placeholder="Como você prefere ser chamado(a)"><label class="fl" for="social">Nome social</label></div></div>
-   <div class="ci"><div class="box"><input id="cel" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(11) 91234-5678" maxlength="15" oninput="maskTel(this)"><label class="fl" for="cel">Celular com DDD</label></div><div class="help">Usamos para falar sobre a sua proposta.</div></div>
-   <div class="ci"><div class="box"><input id="mail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nome@exemplo.com"><label class="fl" for="mail">E-mail</label></div></div>
+   <div class="ci" data-m="M3 M9"><div class="box"><input id="cel" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(11) 91234-5678" maxlength="15" oninput="maskTel(this)"><label class="fl" for="cel">Celular com DDD</label></div><div class="help">Usamos para falar sobre a sua proposta.</div></div>
+   <div class="ci" data-m="M3 M9"><div class="box"><input id="mail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="nome@exemplo.com"><label class="fl" for="mail">E-mail</label></div></div>
    <div class="grid2">
-    <div class="ci"><div class="box"><input id="nasc" inputmode="numeric" autocomplete="bday" placeholder="DD/MM/AAAA" maxlength="10" oninput="maskData(this)"><label class="fl" for="nasc">Data de nascimento</label></div></div>
+    <div class="ci" data-m="M9"><div class="box"><input id="nasc" inputmode="numeric" autocomplete="bday" placeholder="DD/MM/AAAA" maxlength="10" oninput="maskData(this)"><label class="fl" for="nasc">Data de nascimento</label></div></div>
     <div class="ci sel"><div class="box"><select id="sexo"><option value="">Selecione</option><option>Feminino</option><option>Masculino</option></select><label class="fl" for="sexo">Sexo</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
    </div>
-   <div class="ci"><div class="box"><input id="mae" autocomplete="off" autocapitalize="words" maxlength="60" placeholder="Como está no documento"><label class="fl" for="mae">Nome completo da mãe</label></div><div class="help">Usado só para confirmar sua identidade. Aceita até 60 caracteres.</div></div>
+   <div class="ci" data-m="M3 M12"><div class="box"><input id="mae" autocomplete="off" autocapitalize="words" maxlength="60" placeholder="Como está no documento"><label class="fl" for="mae">Nome completo da mãe</label></div><div class="help">Usado só para confirmar sua identidade. Aceita até 60 caracteres.</div></div>
    <div class="ci sel"><div class="box"><select id="ocup"><option value="">Selecione</option><option>Assalariado(a)</option><option>Autônomo(a)</option><option>Empresário(a)</option><option>Aposentado(a) ou pensionista</option><option>Servidor(a) público(a)</option></select><label class="fl" for="ocup">Profissão</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
    <label class="chk"><input type="checkbox">Tenho interesse em receber comunicação com condições especiais e ofertas de Produtos e Serviços Porto.</label>
   </div>
@@ -487,9 +506,9 @@ body.cc .step .t-title{color:#000}
 <!-- ================= CEP ================= -->
 <section class="step" data-s="cep" aria-labelledby="h-cep">
  <div class="stack">
-  <p class="eyebrow v-prop" data-eyebrow></p>
+  <p class="eyebrow v-prop" data-eyebrow data-m="M2 M4"></p>
   <h2 class="t-title" id="h-cep" tabindex="-1">Qual é o seu endereço?</h2>
-  <div class="chip-sum v-prop" data-sum></div>
+  <div class="chip-sum v-prop" data-sum data-m="M13"></div>
   <div class="fields">
    <div class="ci" id="c-cep"><div class="box"><input id="cepi" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" oninput="maskCep(this)"><label class="fl" for="cepi">CEP</label></div><div class="help"><a href="#" onclick="return false">Não sei meu CEP</a></div></div>
    <div id="addrBox" hidden class="fields">
@@ -505,13 +524,13 @@ body.cc .step .t-title{color:#000}
 <!-- ================= DADOS BANCÁRIOS ================= -->
 <section class="step" data-s="banco" aria-labelledby="h-banco">
  <div class="stack v-prop">
-  <p class="eyebrow" data-eyebrow></p>
+  <p class="eyebrow" data-eyebrow data-m="M2 M4"></p>
   <h2 class="t-title" id="h-banco" tabindex="-1">Em qual conta você quer receber o valor de <span data-valor>R$ 30.000</span>?</h2>
   <p class="body1" style="color:var(--n800)">A conta precisa estar no seu nome. Usamos estes dados só para o depósito.</p>
   <div class="fields">
-   <div class="ci sel"><div class="box"><select id="bank"><option value="">Selecione</option><optgroup label="Mais usados"><option>341 - Itaú Unibanco</option><option>237 - Bradesco</option><option>001 - Banco do Brasil</option><option>104 - Caixa Econômica Federal</option><option>260 - Nu Pagamentos (Nubank)</option><option>033 - Santander</option></optgroup><optgroup label="Todos os bancos (A a Z)"><option>077 - Banco Inter</option><option>336 - Banco C6</option><option>323 - Mercado Pago</option><option>290 - PagSeguro</option><option>…demais instituições</option></optgroup></select><label class="fl" for="bank">Instituição</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
+   <div class="ci sel" data-m="M17"><div class="box"><select id="bank"><option value="">Selecione</option><optgroup label="Mais usados"><option>341 - Itaú Unibanco</option><option>237 - Bradesco</option><option>001 - Banco do Brasil</option><option>104 - Caixa Econômica Federal</option><option>260 - Nu Pagamentos (Nubank)</option><option>033 - Santander</option></optgroup><optgroup label="Todos os bancos (A a Z)"><option>077 - Banco Inter</option><option>336 - Banco C6</option><option>323 - Mercado Pago</option><option>290 - PagSeguro</option><option>…demais instituições</option></optgroup></select><label class="fl" for="bank">Instituição</label><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6"/></svg></div></div>
    <div class="grid2"><div class="ci"><div class="box"><input id="ag" inputmode="numeric" placeholder="0000" maxlength="4"><label class="fl" for="ag">Agência (sem dígito)</label></div></div><div class="ci"><div class="box"><input id="cc" inputmode="numeric" placeholder="00000" maxlength="10"><label class="fl" for="cc">Conta</label></div></div></div>
-   <div class="ci" style="max-width:50%"><div class="box"><input id="dg" inputmode="numeric" placeholder="0" maxlength="1"><label class="fl" for="dg">Dígito da conta</label></div><div class="help">Se o dígito for X, digite 0.</div></div>
+   <div class="ci" style="max-width:50%" data-m="M3"><div class="box"><input id="dg" inputmode="numeric" placeholder="0" maxlength="1"><label class="fl" for="dg">Dígito da conta</label></div><div class="help">Se o dígito for X, digite 0.</div></div>
   </div>
   <div class="notif info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7.5v.5"/></svg>Com a Conta Porto, você recebe o seu crédito de forma mais rápida.</div>
   <p class="parc" data-parc></p>
@@ -546,9 +565,9 @@ body.cc .step .t-title{color:#000}
  <div class="stack v-prop" style="gap:28px">
   <span class="done-ic"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
   <h2 class="done-t" id="h-fim" tabindex="-1">Proposta enviada para análise</h2>
-  <p class="done-s">Protocolo <b id="proto">CGV-0000000</b>. Enviamos uma cópia para o seu e-mail.</p>
+  <p class="done-s" data-m="M15">Protocolo <b id="proto">CGV-0000000</b>. Enviamos uma cópia para o seu e-mail.</p>
   <div><p class="body1" style="font-weight:700;margin-bottom:14px">O que acontece agora</p>
-   <ol class="steps3">
+   <ol class="steps3" data-m="M15">
     <li><b>Análise da proposta</b>Nossa equipe analisa seus dados e o veículo em até 48 horas.</li>
     <li><b>Contato da Porto</b>Falamos com você por e-mail ou telefone, no celular que você informou, com os próximos passos.</li>
     <li><b>Contrato e dinheiro na conta</b>Com a aprovação, você revisa e assina o contrato. O valor cai na conta informada.</li>
@@ -670,6 +689,7 @@ body.cc .step .t-title{color:#000}
 <button class="wa" type="button" onclick="waDemo()" aria-label="Falar pelo WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-3.9A8.5 8.5 0 1 1 8 19z"/><path d="M9 8.5c0 3.5 2.6 6.4 6.3 6.6l1.2-1.6-1.9-1-1 .9c-1-.4-2-1.4-2.4-2.4l.9-1-1-1.9z" fill="currentColor" stroke-width="1"/></svg></button>
 <div class="loading" id="loading" role="status" aria-live="polite"><p id="loadMsg">Analisando sua proposta...</p><div class="lp"><i id="loadBar"></i></div></div>
 <div class="sr" aria-live="polite" id="live"></div>
+<div class="toast" id="toast" role="status" hidden></div>
 
 <script>
 "use strict";
@@ -680,7 +700,7 @@ const PROG={prop:{bv:0,cpf:20,cpfnao:20,placa:30,sim:50,dados:60,cep:70,banco:80
 const NOME={cpf:"CPF",cpfnao:"CPF",placa:"placa do veículo",sim:"simulação",dados:"dados pessoais",cep:"endereço",banco:"dados bancários",resumo:"revisão"};
 const COM_DIF=["bv","cpf","cpfnao","placa","sim","dados","cep","banco","fim"];
 const T={cfg:"<span class='tag t-cfg'>config</span>",tag:"<span class='tag t-tag'>tag</span>",dev:"<span class='tag t-dev'>dev</span>",devl:"<span class='tag t-dev'>dev leve</span>",ok:"<span class='tag t-ok'>já existe</span>"};
-const N=(id,t,novo)=>"<span class='id'>"+id+"</span>"+(novo?"<span class='novo'>NOVO</span>":"")+" "+t;
+const N=(id,t,novo)=>"<button type='button' class='mlink' data-go='"+id+"' title='Ver na tela'>"+id+" ↗</button>"+(novo?"<span class='novo'>NOVO</span>":"")+" "+t;
 const NOTES={
 bv:["Boas-vindas: requisitos antes do CPF",[
  T.cfg+N("M1","Requisitos (oferta pré-aprovada, carro no nome, quitado, até 15 anos, idade até 75) aparecem antes do CPF. Hoje só aparecem na etapa da placa, depois da consulta."),
@@ -755,7 +775,7 @@ function show(s,focus){
  document.querySelectorAll("[data-eyebrow]").forEach(e=>{e.textContent=(i>=1&&i<=6)?"Etapa "+i+" de 6":""});
  atualizaValores();
  const temDif=!cc&&COM_DIF.includes(s);$("seg").dataset.off=!temDif;$("segInfo").textContent=(temDif||cc)?"":"(sem mudança nesta etapa)";
- nota();
+ nota();limpaDestaque();if(typeof marcadores==="function")setTimeout(marcadores,0);
  if(!cc&&s!=="bv"&&s!=="fim"){try{localStorage.setItem("cgvproto_etapa",s)}catch(e){}}
  if(s==="bv")mostraResume();
  history.replaceState({s:s,i:idx},"",hashFor(s));
@@ -785,6 +805,36 @@ const NOTES_CC={
 "cc-bv":["BV",["Só o CPF, com teclado numérico.","Antes do campo: até 120% do valor do veículo, até 72 meses e o aviso de multas e impostos em dia. Mesma lógica da M1.","Botão \"Continuar\" desativado até o CPF estar completo (digite 11 números para ver).","Saída explícita: \"Voltar para tela inicial\"."]],
 "cc-serasa":["Serasa Crédito",["Marketplace: a simulação de garantia de veículo passa pelo login com CPF.","\"Lembrar CPF para o próximo acesso\" já vem ligado: referência para a M16 (continuar de onde parou).","Teclado numérico e botão desativado até o CPF estar completo."]],
 "cc-c6":["C6 Bank",["\"Solicitar análise\" leva ao download do app: não há formulário na web.","Vantagem da Porto: jornada inteira no navegador, sem instalar nada."]]};
+
+/* ===== Onde está cada melhoria ===== */
+const MEL={M1:["Requisitos antes do CPF","bv"],M2:["Dados pessoais e CEP antes dos bancários","dados"],M3:["Textos dos campos corrigidos","dados"],M4:["\"Etapa X de 6\" e tempo estimado","cpf"],M5:["Botão e texto do CPF mais claros","bv"],M6:["CPF sem oferta com saída","cpfnao"],M7:["Limite pré-aprovado visível","sim"],M8:["Campos acessíveis","cpf"],M9:["Preenchimento automático","dados"],M10:["Placa com rótulo claro","placa"],M11:["Erro próprio para cada reprovação","placa"],M12:["Nome da mãe com até 60 caracteres","dados"],M13:["Lembrete da simulação","dados"],M14:["Segurança e prova social no CPF","cpf"],M15:["Proposta enviada com próximos passos","fim"],M16:["Continuar de onde parou","bv"],M17:["Bancos mais usados no topo","banco"],M18:["Desempenho no celular","bv"]};
+const PREP={M11:()=>{if(cur==="placa")placaErr("NOT_ALLOWED_VEHICLE_MANUFACTURE_YEAR")},M16:()=>{try{localStorage.setItem("cgvproto_etapa","placa")}catch(e){}mostraResume()}};
+(function(){const sel=$("selM");Object.keys(MEL).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+" · "+MEL[k][0];sel.appendChild(o)})})();
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,4200)}
+function limpaDestaque(){document.querySelectorAll(".hl-m").forEach(e=>e.classList.remove("hl-m"));document.querySelectorAll(".hl-tag").forEach(e=>e.remove())}
+function alvos(m){return [...document.querySelectorAll('.step.on [data-m~="'+m+'"]')].filter(vis)}
+function relativo(el){if(getComputedStyle(el).position==="static")el.style.position="relative"}
+function destaca(m){
+ limpaDestaque();if(PREP[m])PREP[m]();
+ const els=alvos(m);
+ if(!els.length){toast(m+" · "+MEL[m][0]+": não tem um elemento na tela (é carregamento da página). Veja a nota ao lado.");flashNota(m);return false}
+ els.forEach((el,i)=>{relativo(el);el.classList.add("hl-m");if(i===0){const t=document.createElement("span");t.className="hl-tag";t.textContent=m+" · "+MEL[m][0];el.appendChild(t)}});
+ els[0].scrollIntoView({behavior:"smooth",block:"center"});
+ flashNota(m);$("live").textContent="Melhoria "+m+" destacada: "+MEL[m][0];return true}
+function flashNota(m){document.querySelectorAll("#note li").forEach(li=>{const b=li.querySelector('[data-go="'+m+'"]');li.classList.toggle("flash",!!b)})}
+function irMelhoria(m){if(!MEL[m])return;
+ if(modo!=="prop"){modo="prop";document.body.classList.remove("atual");document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m==="prop"))}
+ const alvo=alvos(m).length?cur:MEL[m][1];
+ if(alvo!==cur)go(alvo);else show(cur,false);
+ setTimeout(()=>destaca(m),120)}
+function marcadores(){document.querySelectorAll(".mbadges").forEach(e=>e.remove());document.querySelectorAll(".mk").forEach(e=>e.classList.remove("mk"));
+ if(!$("tgMarks").checked)return;
+ document.querySelectorAll(".step.on [data-m]").forEach(el=>{if(!vis(el))return;relativo(el);el.classList.add("mk");const w=document.createElement("span");w.className="mbadges";
+  el.dataset.m.split(" ").forEach(m=>{const b=document.createElement("button");b.type="button";b.className="mbadge";b.textContent=m;b.title=m+" · "+MEL[m][0];b.addEventListener("click",ev=>{ev.preventDefault();ev.stopPropagation();destaca(m)});w.appendChild(b)});el.appendChild(w)})}
+$("tgMarks").addEventListener("change",marcadores);
+$("ctrlBtn").addEventListener("click",()=>{const o=document.body.classList.toggle("ctrl-open");$("ctrlBtn").setAttribute("aria-expanded",o);$("ctrlBtn").textContent=o?"Controles ▴":"Controles ▾"});
+$("selM").addEventListener("change",e=>{const m=e.target.value;e.target.value="";if(m)irMelhoria(m)});
+$("note").addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b)irMelhoria(b.dataset.go)});
 $("selView").addEventListener("change",e=>{const v=e.target.value;go(v==="porto"?lastPorto:v)});
 function next(){const o=ORDEM[modo],base=cur==="cpfnao"?"cpf":cur,i=o.indexOf(base);if(i>=0&&i<o.length-1)go(o[i+1])}
 function setModo(m){if($("seg").dataset.off==="true")return;modo=m;document.body.classList.toggle("atual",m==="atual");document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m));show(cur,false)}
@@ -846,7 +896,10 @@ function restart(){resumeClear();go("bv")}
 
 document.addEventListener("keydown",e=>{if(e.key!=="Enter"||e.target.tagName!=="INPUT"||e.target.type==="checkbox")return;const b=[...document.querySelectorAll(".step.on .foot .btn")].find(vis);if(b){e.preventDefault();b.click()}});
 
-(function init(){const h=location.hash.slice(1).split("/");if(h[1]==="atual"){modo="atual";document.body.classList.add("atual");document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m==="atual"))}
+history.scrollRestoration="manual";
+/* links diretos (#cpf, #placa) não devem rolar até o campo de mesmo id */
+addEventListener("load",()=>setTimeout(()=>{const h=document.querySelector(".hl-m");if(h)h.scrollIntoView({block:"center"});else scrollTo(0,0)},0));
+(function init(){const mm=location.hash.match(/^#m-(M\d+)$/);if(mm){history.replaceState(null,"","#bv");setTimeout(()=>irMelhoria(mm[1]),60)}const h=location.hash.slice(1).split("/");if(h[1]==="atual"){modo="atual";document.body.classList.add("atual");document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m==="atual"))}
  const s=document.querySelector('.step[data-s="'+h[0]+'"]')?h[0]:"bv";sim();show(s,false)})();
 </script>
 </body>
