@@ -135,7 +135,8 @@ body:not(.atual) .v-atual,body.atual .v-prop{display:none!important}
 /* Proposto: rótulo sempre visível, exemplo de formato visível, fonte 16px (sem zoom no iPhone), foco escuro */
 .v-prop .ci .fl,.ci.pl .fl{top:8px;transform:none;font-size:11px;line-height:14px;color:var(--n800);font-weight:600}
 .v-prop .ci input,.ci.pl input,.v-prop .ci select{padding-top:16px;font-size:16px}
-.v-prop .ci input::placeholder{color:#8a8b8e}
+.v-prop .ci input::placeholder,.ci.pl input::placeholder{color:#8a8b8e}
+h1[tabindex="-1"]:focus-visible,h2[tabindex="-1"]:focus-visible{outline:none}
 .v-prop .ci:focus-within .box{border-color:var(--s900);box-shadow:0 0 0 1px var(--s900)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .fields{display:flex;flex-direction:column;gap:16px}
@@ -207,6 +208,30 @@ body:not(.atual) .v-atual,body.atual .v-prop{display:none!important}
 .wa:hover{transform:scale(1.1)}.wa svg{width:26px;height:26px}
 body.bv .wa{display:none}
 
+/* Concorrentes: estrutura da 1a etapa no visual neutro do protótipo (sem identidade visual do concorrente) */
+.proto select{font:600 12.5px/1.2 var(--fb);border:1px solid #222;border-radius:999px;padding:3px 8px;background:#fff;color:#222;max-width:230px}
+.cc-chip{grid-column:2;justify-self:center;display:none;font:700 13px/1 var(--fb);color:var(--n800);background:var(--n200);border:1px solid var(--n400);border-radius:999px;padding:8px 14px;white-space:nowrap}
+body.cc .logo{display:none}body.cc .cc-chip{display:inline-block}
+body.cc .wa,body.cc .pbar{display:none}
+body.cc .step .t-title{color:#000}
+@media(min-width:768px){body.wide .content{grid-column:2/10}}
+.cc-ban{background:var(--n200);border-left:4px solid var(--n700);border-radius:8px;padding:12px 14px;font:13px/18px var(--fb);color:var(--n800)}
+.cc-ban b{display:block;font-size:14px;line-height:20px;color:#000;margin-bottom:2px}
+.cc-ban a{font-weight:600}
+.cc-gap{border:1px dashed var(--n500);border-radius:8px;padding:12px;font:13px/18px var(--fb);color:var(--n700);text-align:center}
+.cc-msg{font:13px/18px var(--fb);color:var(--n700);text-align:center;margin:0}
+.tog{display:flex;justify-content:space-between;align-items:center;gap:12px;font:14px/20px var(--fb)}
+.tog i{flex:none;width:40px;height:22px;border-radius:999px;background:var(--s900);position:relative}.tog i::after{content:"";position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.btn[aria-disabled=true]{background:var(--n400);color:var(--n700);cursor:not-allowed}
+.cmp-wrap{overflow-x:auto;margin:0 -4px}
+.cmp{width:100%;min-width:640px;border-collapse:collapse;font:13px/18px var(--fb)}
+.cmp th,.cmp td{border-bottom:1px solid var(--n400);padding:8px 6px;text-align:left;vertical-align:top}
+.cmp th{font-weight:700;color:var(--n800);background:var(--n200)}
+.cmp tr.porto td{background:#f3f7ff}
+.cmp td:first-child{font-weight:700;color:#000}
+.cmp button{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--s900);text-decoration:underline;cursor:pointer;text-align:left}
+.y{color:var(--ok900);font-weight:700}.n{color:var(--d900);font-weight:700}.nv{color:var(--n700)}
+
 /* Controles que só existem no protótipo */
 .demo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px dashed #c9a400;background:#fffbe6;border-radius:8px;padding:8px 10px;font:12px/16px var(--fb);color:#5c4400}
 .demo b{font-weight:700}
@@ -235,12 +260,24 @@ body.bv .wa{display:none}
     <label><input type="checkbox" id="tgNotes" checked> mostrar notas</label>
     <span class="seg" id="seg" role="group" aria-label="Versão exibida"><button type="button" data-m="prop" aria-pressed="true">Proposto</button><button type="button" data-m="atual" aria-pressed="false">Atual</button></span>
     <small id="segInfo"></small>
+    <label>Ver <select id="selView" aria-label="Escolher o que ver">
+      <option value="porto">Porto (protótipo)</option>
+      <optgroup label="Concorrentes · 1ª etapa">
+        <option value="cc-comp">Comparativo das primeiras etapas</option>
+        <option value="cc-creditas">Creditas (simulação)</option>
+        <option value="cc-creditas-calc">Creditas (calculadora)</option>
+        <option value="cc-santander">Santander (via Sim)</option>
+        <option value="cc-bv">BV</option>
+        <option value="cc-serasa">Serasa Crédito</option>
+        <option value="cc-c6">C6 Bank</option>
+      </optgroup></select></label>
   </span>
 </div>
 
 <header class="hd">
   <button class="back" type="button" onclick="back()" aria-label="Voltar para página anterior"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12H2.5M10 4.5 2.5 12l7.5 7.5"/></svg></button>
   <span class="logo" aria-label="Porto">Porto</span>
+  <span class="cc-chip" id="ccChip">Referência de mercado</span>
   <span></span>
 </header>
 <div class="pbar" aria-hidden="true"><i id="bar"></i></div>
@@ -531,6 +568,101 @@ body.bv .wa{display:none}
  </div>
 </section>
 
+<!-- ================= CONCORRENTES (1a etapa, só estrutura) ================= -->
+<section class="step" data-s="cc-comp" aria-labelledby="h-cc-comp">
+ <div class="stack" style="gap:24px">
+  <div class="cc-ban"><b>Referência de mercado · comparativo</b>Primeira etapa de cada concorrente, lida em 18/11/2026 sem preencher nenhum campo. Clique no nome para ver a estrutura da tela; a seta do cabeçalho traz de volta.</div>
+  <h2 class="t-title" id="h-cc-comp" tabindex="-1">O que cada um pede na primeira etapa</h2>
+  <div class="cmp-wrap"><table class="cmp">
+   <thead><tr><th>Quem</th><th>Campos na 1ª etapa</th><th>Contato antes da consulta</th><th>Requisitos antes do CPF</th><th>Teclado no CPF</th><th>Retomar depois</th></tr></thead>
+   <tbody>
+    <tr class="porto"><td><button type="button" onclick="verPorto('cpf','atual')">Porto hoje</button></td><td>CPF</td><td class="n">Não (só na 7ª tela)</td><td class="n">Não</td><td>Telefone</td><td class="n">Não</td></tr>
+    <tr class="porto"><td><button type="button" onclick="verPorto('cpf','prop')">Porto proposto</button></td><td>CPF</td><td>Na 4ª etapa (M2)</td><td class="y">Sim (M1)</td><td>Numérico</td><td class="y">Sim (M16)</td></tr>
+    <tr><td><button type="button" onclick="go('cc-creditas')">Creditas (simulação)</button></td><td>Valor, nome, e-mail, CPF</td><td class="y">Sim</td><td>Só o valor mínimo</td><td class="nv">não verificado</td><td class="nv">não verificado</td></tr>
+    <tr><td><button type="button" onclick="go('cc-creditas-calc')">Creditas (calculadora)</button></td><td>CPF</td><td class="n">Não</td><td class="n">Não</td><td class="nv">não verificado</td><td class="nv">não verificado</td></tr>
+    <tr><td><button type="button" onclick="go('cc-santander')">Santander (via Sim)</button></td><td>CPF, nome, nascimento, celular, e-mail</td><td class="y">Sim</td><td class="n">Não</td><td>Telefone</td><td>Login para quem já tem conta</td></tr>
+    <tr><td><button type="button" onclick="go('cc-bv')">BV</button></td><td>CPF</td><td class="n">Não</td><td>Em parte (multas e impostos)</td><td>Numérico</td><td class="nv">não verificado</td></tr>
+    <tr><td><button type="button" onclick="go('cc-serasa')">Serasa Crédito</button></td><td>CPF (login)</td><td class="n">Não</td><td class="n">Não</td><td>Numérico</td><td class="y">"Lembrar CPF"</td></tr>
+    <tr><td><button type="button" onclick="go('cc-c6')">C6 Bank</button></td><td>Nenhum na web (app)</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+    <tr><td>Banco Pan · Itaú</td><td colspan="5" class="nv">Não verificado: as páginas de empréstimo com garantia de veículo retornaram erro 404 em 18/11/2026.</td></tr>
+   </tbody></table></div>
+ </div>
+</section>
+
+<section class="step" data-s="cc-creditas" aria-labelledby="h-cc-creditas">
+ <div class="stack" style="gap:24px">
+  <div class="cc-ban"><b>Referência de mercado · Creditas (simulação)</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. <a href="https://www.creditas.com/emprestimo/garantia-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-creditas" tabindex="-1">Simule um crédito com seu carro em garantia</h2>
+  <p class="t-p">Preencha com seus dados para começarmos a simulação.</p>
+  <div class="fields">
+   <div class="ci pl"><div class="box"><input inputmode="numeric" value="R$ 5.000"><label class="fl">Valor desejado</label></div><div class="help">O valor mínimo do empréstimo é de R$ 5.000,00.</div></div>
+   <div class="ci pl"><div class="box"><input placeholder="Qual é seu nome completo?"><label class="fl">Nome completo</label></div></div>
+   <div class="ci pl"><div class="box"><input type="email" placeholder="E qual é seu e-mail?"><label class="fl">E-mail</label></div></div>
+   <div class="ci pl"><div class="box"><input inputmode="numeric" maxlength="14" placeholder="Agora, informe seu CPF" oninput="maskCpf2(this)"><label class="fl">CPF</label></div></div>
+  </div>
+  <div class="cc-gap">O print registrado termina no CPF. Campos e botão seguintes não foram lidos.</div>
+ </div>
+</section>
+
+<section class="step" data-s="cc-creditas-calc" aria-labelledby="h-cc-creditas-calc">
+ <div class="stack" style="gap:24px">
+  <div class="cc-ban"><b>Referência de mercado · Creditas (calculadora)</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. <a href="https://www.creditas.com/emprestimo/garantia-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-creditas-calc" tabindex="-1">Calculadora de crédito com o carro em garantia</h2>
+  <p class="t-p">Começa pelo CPF, como a Porto.</p>
+  <div class="ci pl"><div class="box"><input inputmode="numeric" maxlength="14" placeholder=" " oninput="maskCpf2(this)"><label class="fl">Informe seu CPF</label></div></div>
+  <div class="cc-gap">Campos e botão seguintes não foram lidos.</div>
+ </div>
+</section>
+
+<section class="step" data-s="cc-santander" aria-labelledby="h-cc-santander">
+ <div class="stack" style="gap:24px">
+  <div class="cc-ban"><b>Referência de mercado · Santander (via Sim)</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. O botão "Simular agora" da página do Santander leva ao cadastro da Sim, financeira do grupo. <a href="https://www.santander.com.br/usecarro" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-santander" tabindex="-1">Inicie sua simulação</h2>
+  <p class="t-p">Os dados abaixo serão usados para personalizar sua oferta.</p>
+  <div class="fields">
+   <div class="ci"><div class="box"><input type="tel" maxlength="14" placeholder=" " oninput="maskCpf2(this)"><label class="fl">CPF</label></div></div>
+   <div class="ci"><div class="box"><input placeholder=" "><label class="fl">Nome completo</label></div></div>
+   <div class="ci"><div class="box"><input type="tel" placeholder=" "><label class="fl">Data de aniversário</label></div></div>
+   <div class="ci"><div class="box"><input type="tel" placeholder=" "><label class="fl">Número de celular</label></div></div>
+   <div class="ci"><div class="box"><input type="email" placeholder=" "><label class="fl">E-mail</label></div></div>
+  </div>
+  <div class="ph-legal">[Texto de privacidade do concorrente]</div>
+  <div class="foot"><button class="btn" type="button" onclick="ccNext(this)">Continuar</button><p class="cc-msg" hidden>Protótipo: só a primeira etapa deste concorrente foi registrada.</p></div>
+  <p class="body1" style="font-size:14px;text-align:center">Já tem conta? <a href="#" onclick="return false">Entre aqui</a></p>
+ </div>
+</section>
+
+<section class="step" data-s="cc-bv" aria-labelledby="h-cc-bv">
+ <div class="stack" style="gap:24px">
+  <div class="cc-ban"><b>Referência de mercado · BV</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. <a href="https://www.bv.com.br/emprestimos/emprestimo-com-garantia-de-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-bv" tabindex="-1">Simulador de empréstimo com garantia de veículo</h2>
+  <p class="body1">Crédito de até 120% do valor do veículo, sem deixar de usar o carro, com até 72 meses para pagar.<br><b>Lembre-se: multas e impostos devem estar regularizados.</b></p>
+  <p class="t-p">Para começar, informe o seu CPF.</p>
+  <div class="ci"><div class="box"><input id="bvCpf" inputmode="numeric" maxlength="14" placeholder=" " oninput="maskCpf2(this);ccBtn(this)"><label class="fl" for="bvCpf">Digite seu CPF aqui*</label></div></div>
+  <div class="foot"><button class="btn" type="button" aria-disabled="true" onclick="ccNext(this)">Continuar</button><p class="cc-msg" hidden>Protótipo: só a primeira etapa deste concorrente foi registrada.</p><button class="btn stroke" type="button" onclick="back()">Voltar para tela inicial</button></div>
+ </div>
+</section>
+
+<section class="step" data-s="cc-serasa" aria-labelledby="h-cc-serasa">
+ <div class="stack" style="gap:24px">
+  <div class="cc-ban"><b>Referência de mercado · Serasa Crédito</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. Marketplace: a simulação passa pelo login com CPF. <a href="https://www.serasa.com.br/ecred/emprestimos/emprestimo-com-garantia-de-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-serasa" tabindex="-1">Digite seu CPF</h2>
+  <div class="ci pl"><div class="box"><input id="seCpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" oninput="maskCpf2(this);ccBtn(this)"><label class="fl" for="seCpf">CPF</label></div></div>
+  <div class="tog"><span>Lembrar CPF para o próximo acesso</span><i aria-hidden="true"></i></div>
+  <div class="ph-legal">[Termos de uso e política de privacidade do concorrente]</div>
+  <div class="foot"><button class="btn" type="button" aria-disabled="true" onclick="ccNext(this)">Continuar</button><p class="cc-msg" hidden>Protótipo: só a primeira etapa deste concorrente foi registrada.</p></div>
+ </div>
+</section>
+
+<section class="step" data-s="cc-c6" aria-labelledby="h-cc-c6">
+ <div class="stack" style="gap:24px">
+  <div class="cc-ban"><b>Referência de mercado · C6 Bank</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. <a href="https://www.c6bank.com.br/emprestimo-com-garantia-de-veiculo/" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-c6" tabindex="-1">Sem formulário na web</h2>
+  <p class="t-p">O botão "Solicitar análise" da página leva ao download do app. A simulação acontece só dentro do aplicativo.</p>
+  <div class="cc-gap">Nenhum campo na web para comparar.</div>
+ </div>
+</section>
+
 </main>
 <aside class="notes" aria-label="Notas do protótipo"><div class="note" id="note"></div></aside>
 </div>
@@ -561,7 +693,7 @@ cpf:["CPF: expectativa, rótulo e erro claro",[
  T.cfg+N("M4","\"Etapa 1 de 6\" além da barra de progresso."),
  T.cfg+N("M5","O texto diz que é uma consulta de oferta pré-aprovada, não uma simulação livre."),
  T.devl+N("M8","Rótulo \"CPF\" fixo acima do campo. Hoje \"CPF\" é o texto de exemplo: some ao digitar e tem contraste 2:1 (mínimo 4,5:1, WCAG 1.4.3). Foco com borda escura; hoje a borda de foco #66cafc tem 1,9:1 (mínimo 3:1, WCAG 1.4.11). Erro ligado ao campo com aria-invalid.",1),
- T.devl+N("M9","Teclado numérico (inputmode=numeric). Hoje o campo é type=tel sem inputmode.",1),
+ T.ok+"O campo já abre o teclado de telefone (type=tel), adequado para o CPF.",
  T.cfg+N("M14","Segurança e prova social junto do CPF, o campo de maior abandono. O número exato fica a cargo da Porto.",1),
  T.cfg+N("M11","Erro de digitação diz o que corrigir."),
  T.tag+"alert (preencheu:cpf:alert) já mede o erro de digitação."]],
@@ -604,35 +736,57 @@ fim:["Proposta enviada: próximos passos",[
  T.devl+N("M15","Texto fixo no componente. Proposta: protocolo, o que acontece agora em 3 passos e WhatsApp como ação principal. Hoje a ação principal é \"Conheça outros produtos\".",1),
  "O protocolo do protótipo é fictício."]]
 };
-let modo="prop",cur="bv",hist=[],prazo=48;
+let modo="prop",cur="bv",prazo=48,idx=0,lastPorto="bv";
 const $=id=>document.getElementById(id);
 const fmt=(v,c)=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:c?2:0,maximumFractionDigits:c?2:0});
 function parcela(){const i=0.0179,v=+$("rng").value;return v*i/(1-Math.pow(1+i,-prazo))}
 function vis(el){return !!(el.offsetWidth||el.offsetHeight||el.getClientRects().length)}
 
+const isCC=s=>s.indexOf("cc-")===0;
+const hashFor=s=>"#"+s+(modo==="atual"&&!isCC(s)?"/atual":"");
 function show(s,focus){
- cur=s;document.querySelectorAll(".step").forEach(e=>e.classList.toggle("on",e.dataset.s===s));
- document.body.classList.toggle("bv",s==="bv");document.body.classList.toggle("no-bar",s==="bv");
+ cur=s;const cc=isCC(s);if(!cc)lastPorto=s;
+ document.querySelectorAll(".step").forEach(e=>e.classList.toggle("on",e.dataset.s===s));
+ document.body.classList.toggle("bv",s==="bv");document.body.classList.toggle("no-bar",s==="bv"||cc);
+ document.body.classList.toggle("cc",cc);document.body.classList.toggle("wide",s==="cc-comp");
+ $("selView").value=cc?s:"porto";
  $("bar").style.width=(PROG[modo][s]||0)+"%";
  const ordem=ORDEM[modo],i=ordem.indexOf(s==="cpfnao"?"cpf":s);
  document.querySelectorAll("[data-eyebrow]").forEach(e=>{e.textContent=(i>=1&&i<=6)?"Etapa "+i+" de 6":""});
  atualizaValores();
- const temDif=COM_DIF.includes(s);$("seg").dataset.off=!temDif;$("segInfo").textContent=temDif?"":"(sem mudança nesta etapa)";
+ const temDif=!cc&&COM_DIF.includes(s);$("seg").dataset.off=!temDif;$("segInfo").textContent=(temDif||cc)?"":"(sem mudança nesta etapa)";
  nota();
- if(s!=="bv"&&s!=="fim"){try{localStorage.setItem("cgvproto_etapa",s)}catch(e){}}
+ if(!cc&&s!=="bv"&&s!=="fim"){try{localStorage.setItem("cgvproto_etapa",s)}catch(e){}}
  if(s==="bv")mostraResume();
- history.replaceState(null,"","#"+s+(modo==="atual"?"/atual":""));
+ history.replaceState({s:s,i:idx},"",hashFor(s));
  window.scrollTo(0,0);
  if(focus){const h=[...document.querySelectorAll(".step.on .t-title,.step.on h1,.step.on .done-t")].find(vis);if(h)h.focus({preventScroll:true})}
- $("live").textContent="Etapa: "+(NOME[s]||"início");
+ $("live").textContent=cc?"Referência de mercado: "+NOTES_CC[s][0]:"Etapa: "+(NOME[s]||"início");
 }
 function nota(){
+ if(isCC(cur)){const c=NOTES_CC[cur];$("note").innerHTML="<h2>Referência de mercado: "+c[0]+"</h2><p class='mode'>Leitura de 18/11/2026. A seta do cabeçalho ou o voltar do navegador levam de volta à etapa da Porto em que você estava.</p><ul>"+c[1].map(x=>"<li>"+x+"</li>").join("")+"</ul>";return}
  const n=NOTES[cur];if(!n)return;
  $("note").innerHTML="<h2>O que muda nesta etapa: "+n[0]+"</h2>"+(modo==="atual"?"<p class='mode'>Você está vendo a versão ATUAL, reconstruída a partir da configuração real da jornada.</p>":"<p class='mode'>Versão PROPOSTA. Use \"Atual\" na faixa amarela para comparar.</p>")+"<ul>"+n[1].map(x=>"<li>"+x+"</li>").join("")+"</ul><div class='leg'>"+T.cfg+"configuração da jornada<br>"+T.tag+"GTM/GA4<br>"+T.devl+"/"+T.dev+"desenvolvimento<br>"+T.ok+"comportamento que o site já tem</div>";
 }
-function go(s){hist.push(cur);show(s,true)}
+function go(s){if(s===cur)return;idx++;history.pushState({s:s,i:idx},"",hashFor(s));show(s,true)}
+function prevOf(s){if(isCC(s))return lastPorto;if(s==="cpfnao")return "cpf";const o=ORDEM[modo],i=o.indexOf(s);return i>0?o[i-1]:null}
+/* Voltar sempre funciona: usa o histórico da sessão; sem histórico (link direto), volta para a etapa anterior da ordem. */
+function back(){if(idx>0){history.back();return}const p=prevOf(cur);if(p){history.replaceState({s:p,i:0},"",hashFor(p));show(p,true)}else $("live").textContent="Protótipo: no site real, esta seta volta para a página do produto."}
+window.addEventListener("popstate",e=>{const st=e.state||{};const s=st.s||location.hash.slice(1).split("/")[0]||"bv";idx=typeof st.i==="number"?st.i:0;if(document.querySelector('.step[data-s="'+s+'"]'))show(s,true)});
+function verPorto(s,m){if(m!==modo){modo=m;document.body.classList.toggle("atual",m==="atual");document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m))}go(s)}
+function maskCpf2(e){const d=e.value.replace(/\D/g,"").slice(0,11);e.value=d.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2")}
+function ccBtn(inp){const b=inp.closest(".step").querySelector(".foot .btn");b.setAttribute("aria-disabled",inp.value.replace(/\D/g,"").length===11?"false":"true")}
+function ccNext(b){if(b.getAttribute("aria-disabled")==="true")return;const m=b.parentElement.querySelector(".cc-msg");if(m)m.hidden=false}
+const NOTES_CC={
+"cc-comp":["comparativo das primeiras etapas",["Dois grupos: quem pede o contato junto com o CPF (Creditas simulação, Santander via Sim) e quem pede só o CPF (BV, Serasa, Creditas calculadora e a Porto).","Quem pede contato na primeira tela consegue trabalhar a pessoa mesmo se ela for recusada. Na Porto, a M2 antecipa o contato para a 4ª etapa sem alongar a primeira.","Nenhum concorrente mostra todos os requisitos do veículo antes do CPF; o BV mostra parte. A M1 da Porto vai além.","Só a Serasa oferece algo parecido com retomar a jornada (\"Lembrar CPF\")."]],
+"cc-creditas":["Creditas (simulação)",["Valor, nome, e-mail e CPF na mesma tela: o contato fica gravado antes da consulta de crédito.","Avisa o valor mínimo logo abaixo do campo de valor.","Rótulos em forma de pergunta (\"Qual é seu nome completo?\").","Comparado com a Porto: hoje o contato só é gravado na 7ª tela; com a M2, na 4ª."]],
+"cc-creditas-calc":["Creditas (calculadora)",["Começa só pelo CPF, como a Porto.","CPF primeiro é comum no mercado; a diferença está no que vem antes e depois dele."]],
+"cc-santander":["Santander (via Sim)",["O \"Simular agora\" do Santander leva ao cadastro da Sim, financeira do grupo.","Cinco campos na primeira tela: CPF, nome, data de aniversário, celular e e-mail.","Rótulos dentro do campo, que encolhem ao digitar.","Entrada separada para quem já tem conta (\"Entre aqui\")."]],
+"cc-bv":["BV",["Só o CPF, com teclado numérico.","Antes do campo: até 120% do valor do veículo, até 72 meses e o aviso de multas e impostos em dia. Mesma lógica da M1.","Botão \"Continuar\" desativado até o CPF estar completo (digite 11 números para ver).","Saída explícita: \"Voltar para tela inicial\"."]],
+"cc-serasa":["Serasa Crédito",["Marketplace: a simulação de garantia de veículo passa pelo login com CPF.","\"Lembrar CPF para o próximo acesso\" já vem ligado: referência para a M16 (continuar de onde parou).","Teclado numérico e botão desativado até o CPF estar completo."]],
+"cc-c6":["C6 Bank",["\"Solicitar análise\" leva ao download do app: não há formulário na web.","Vantagem da Porto: jornada inteira no navegador, sem instalar nada."]]};
+$("selView").addEventListener("change",e=>{const v=e.target.value;go(v==="porto"?lastPorto:v)});
 function next(){const o=ORDEM[modo],base=cur==="cpfnao"?"cpf":cur,i=o.indexOf(base);if(i>=0&&i<o.length-1)go(o[i+1])}
-function back(){if(hist.length)show(hist.pop(),true)}
 function setModo(m){if($("seg").dataset.off==="true")return;modo=m;document.body.classList.toggle("atual",m==="atual");document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m));show(cur,false)}
 document.querySelectorAll("#seg button").forEach(b=>b.addEventListener("click",()=>setModo(b.dataset.m)));
 $("tgNotes").addEventListener("change",e=>document.body.classList.toggle("nonotes",!e.target.checked));
@@ -688,7 +842,7 @@ function waDemo(){$("live").textContent="Protótipo: o WhatsApp não é aberto."
 function mostraResume(){let s=null;try{s=localStorage.getItem("cgvproto_etapa")}catch(e){}const r=$("resume");if(s&&NOME[s]){$("resumeStep").textContent=NOME[s];r.hidden=false}else r.hidden=true}
 function resumeGo(){let s=null;try{s=localStorage.getItem("cgvproto_etapa")}catch(e){}if(s)go(s)}
 function resumeClear(){try{localStorage.removeItem("cgvproto_etapa")}catch(e){}$("resume").hidden=true}
-function restart(){resumeClear();hist=[];show("bv",true)}
+function restart(){resumeClear();go("bv")}
 
 document.addEventListener("keydown",e=>{if(e.key!=="Enter"||e.target.tagName!=="INPUT"||e.target.type==="checkbox")return;const b=[...document.querySelectorAll(".step.on .foot .btn")].find(vis);if(b){e.preventDefault();b.click()}});
 
