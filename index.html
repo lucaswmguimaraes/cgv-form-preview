@@ -224,6 +224,35 @@ body.bv .wa{display:none}
 .note li.flash{background:#ffe2c4;border-radius:6px;transition:background .4s}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;background:#222;color:#fff;font:600 13px/1.4 var(--fb);padding:10px 16px;border-radius:8px;max-width:92vw;box-shadow:0 4px 14px #0004}
 
+/* Concorrentes v2: print real + fluxo completo */
+.cc-tabs{display:flex;gap:0;border-bottom:1px solid var(--n400)}
+.cc-tabs button{border:0;background:none;padding:10px 16px;font:700 14px/20px var(--fb);color:var(--n700);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.cc-tabs button[aria-selected=true]{color:#000;border-bottom-color:#000}
+.devtog{display:inline-flex;border:1px solid var(--n500);border-radius:999px;overflow:hidden;align-self:flex-start}
+.devtog button{border:0;background:#fff;padding:5px 12px;font:600 12.5px var(--fb);cursor:pointer;color:var(--n800)}
+.devtog button[aria-pressed=true]{background:#222;color:#fff}
+.shot{margin:0;display:flex;flex-direction:column;gap:8px}
+.shot .frame{border:1px solid var(--n400);border-radius:10px;overflow:auto;max-height:78vh;background:#fafafa;box-shadow:0 2px 10px #0000000f}
+.shot img{display:block;width:100%;height:auto}
+.shot.m .frame{width:min(390px,100%);margin:0 auto}
+.shot .img-m,.shot.m .img-d{display:none}.shot.m .img-m{display:block}
+.shot figcaption{font:12px/16px var(--fb);color:var(--n700)}
+.flow{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;counter-reset:f}
+.flow li{position:relative;padding:0 0 18px 46px;counter-increment:f}
+.flow li::before{content:counter(f);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:#222;color:#fff;font:700 13px/30px var(--fb);text-align:center}
+.flow li::after{content:"";position:absolute;left:14px;top:32px;bottom:4px;width:2px;background:var(--n400)}
+.flow li:last-child::after{display:none}
+.flow .ft{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font:700 15px/22px var(--fb);color:#000}
+.flow .src{font:700 10.5px/1 var(--fb);border-radius:4px;padding:3px 6px;text-transform:uppercase;letter-spacing:.3px}
+.src.seen{background:#e6f5ee;color:#0a6b42}.src.code{background:#e8eefc;color:#1d3f99}.src.nv{background:#f0f0f2;color:var(--n700)}
+.flow .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+.flow .chips span{border:1px solid var(--n500);border-radius:6px;padding:3px 8px;font:13px/18px var(--fb);background:#fff}
+.flow p{font:13px/18px var(--fb);color:var(--n800);margin:4px 0 0}
+.flow li.nv .ft{color:var(--n700)}
+.learn{background:#fffbe6;border:1px dashed #d9b400;border-radius:8px;padding:12px 14px;font:13.5px/1.45 var(--fb)}
+.learn b{display:block;margin-bottom:4px}
+.learn ul{margin:0;padding-left:18px}
+
 /* Concorrentes: estrutura da 1a etapa no visual neutro do protótipo (sem identidade visual do concorrente) */
 .proto select{font:600 12.5px/1.2 var(--fb);border:1px solid #222;border-radius:999px;padding:3px 8px;background:#fff;color:#222;max-width:230px}
 .cc-chip{grid-column:2;justify-self:center;display:none;font:700 13px/1 var(--fb);color:var(--n800);background:var(--n200);border:1px solid var(--n400);border-radius:999px;padding:8px 14px;white-space:nowrap}
@@ -284,7 +313,6 @@ body.cc .step .t-title{color:#000}
       <optgroup label="Concorrentes · 1ª etapa">
         <option value="cc-comp">Comparativo das primeiras etapas</option>
         <option value="cc-creditas">Creditas (simulação)</option>
-        <option value="cc-creditas-calc">Creditas (calculadora)</option>
         <option value="cc-santander">Santander (via Sim)</option>
         <option value="cc-bv">BV</option>
         <option value="cc-serasa">Serasa Crédito</option>
@@ -590,95 +618,103 @@ body.cc .step .t-title{color:#000}
 <!-- ================= CONCORRENTES (1a etapa, só estrutura) ================= -->
 <section class="step" data-s="cc-comp" aria-labelledby="h-cc-comp">
  <div class="stack" style="gap:24px">
-  <div class="cc-ban"><b>Referência de mercado · comparativo</b>Primeira etapa de cada concorrente, lida em 18/11/2026 sem preencher nenhum campo. Clique no nome para ver a estrutura da tela; a seta do cabeçalho traz de volta.</div>
-  <h2 class="t-title" id="h-cc-comp" tabindex="-1">O que cada um pede na primeira etapa</h2>
+  <div class="cc-ban"><b>Referência de mercado · comparativo</b>Leitura de 18 e 19/11/2026, sem preencher nenhum campo: primeira tela vista nos prints, etapas seguintes lidas no código público. Clique no nome para ver o print real e o fluxo completo; a seta do cabeçalho traz de volta.</div>
+  <h2 class="t-title" id="h-cc-comp" tabindex="-1">Como cada um começa e quanto pede até o fim</h2>
   <div class="cmp-wrap"><table class="cmp">
-   <thead><tr><th>Quem</th><th>Campos na 1ª etapa</th><th>Contato antes da consulta</th><th>Requisitos antes do CPF</th><th>Teclado no CPF</th><th>Retomar depois</th></tr></thead>
+   <thead><tr><th>Quem</th><th>Campos na 1ª etapa</th><th>Contato antes da consulta</th><th>Requisitos antes do CPF</th><th>Teclado no CPF</th><th>Retomar depois</th><th>Telas até enviar</th></tr></thead>
    <tbody>
-    <tr class="porto"><td><button type="button" onclick="verPorto('cpf','atual')">Porto hoje</button></td><td>CPF</td><td class="n">Não (só na 7ª tela)</td><td class="n">Não</td><td>Telefone</td><td class="n">Não</td></tr>
-    <tr class="porto"><td><button type="button" onclick="verPorto('cpf','prop')">Porto proposto</button></td><td>CPF</td><td>Na 4ª etapa (M2)</td><td class="y">Sim (M1)</td><td>Numérico</td><td class="y">Sim (M16)</td></tr>
-    <tr><td><button type="button" onclick="go('cc-creditas')">Creditas (simulação)</button></td><td>Valor, nome, e-mail, CPF</td><td class="y">Sim</td><td>Só o valor mínimo</td><td class="nv">não verificado</td><td class="nv">não verificado</td></tr>
-    <tr><td><button type="button" onclick="go('cc-creditas-calc')">Creditas (calculadora)</button></td><td>CPF</td><td class="n">Não</td><td class="n">Não</td><td class="nv">não verificado</td><td class="nv">não verificado</td></tr>
-    <tr><td><button type="button" onclick="go('cc-santander')">Santander (via Sim)</button></td><td>CPF, nome, nascimento, celular, e-mail</td><td class="y">Sim</td><td class="n">Não</td><td>Telefone</td><td>Login para quem já tem conta</td></tr>
-    <tr><td><button type="button" onclick="go('cc-bv')">BV</button></td><td>CPF</td><td class="n">Não</td><td>Em parte (multas e impostos)</td><td>Numérico</td><td class="nv">não verificado</td></tr>
-    <tr><td><button type="button" onclick="go('cc-serasa')">Serasa Crédito</button></td><td>CPF (login)</td><td class="n">Não</td><td class="n">Não</td><td>Numérico</td><td class="y">"Lembrar CPF"</td></tr>
-    <tr><td><button type="button" onclick="go('cc-c6')">C6 Bank</button></td><td>Nenhum na web (app)</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-    <tr><td>Banco Pan · Itaú</td><td colspan="5" class="nv">Não verificado: as páginas de empréstimo com garantia de veículo retornaram erro 404 em 18/11/2026.</td></tr>
+    <tr class="porto"><td><button type="button" onclick="verPorto('cpf','atual')">Porto hoje</button></td><td>CPF</td><td class="n">Não (só na 7ª tela)</td><td class="n">Não</td><td>Telefone</td><td class="n">Não</td><td>8</td></tr>
+    <tr class="porto"><td><button type="button" onclick="verPorto('cpf','prop')">Porto proposto</button></td><td>CPF</td><td>Na 4ª etapa (M2)</td><td class="y">Sim (M1)</td><td>Numérico</td><td class="y">Sim (M16)</td><td>8</td></tr>
+    <tr><td><button type="button" onclick="go('cc-creditas')">Creditas (simulação)</button></td><td>Valor, nome, e-mail, CPF</td><td class="y">Sim</td><td>Só o valor mínimo</td><td class="nv">não verificado</td><td class="nv">não verificado</td><td>3 + modelo do carro</td></tr>
+    <tr><td>Creditas (calculadora)</td><td>CPF</td><td class="n">Não</td><td class="n">Não</td><td class="nv">não verificado</td><td class="nv">não verificado</td><td>não verificado</td></tr>
+    <tr><td><button type="button" onclick="go('cc-santander')">Santander (via Sim)</button></td><td>CPF, nome, nascimento, celular, e-mail</td><td class="y">Sim</td><td class="n">Não</td><td>Telefone</td><td>Login para quem já tem conta</td><td>cerca de 14 (inclui senha, selfie e documentos)</td></tr>
+    <tr><td><button type="button" onclick="go('cc-bv')">BV</button></td><td>CPF</td><td class="n">Não</td><td>Em parte (multas e impostos)</td><td>Numérico</td><td class="nv">não verificado</td><td>não verificado</td></tr>
+    <tr><td><button type="button" onclick="go('cc-serasa')">Serasa Crédito</button></td><td>CPF (login)</td><td class="n">Não</td><td class="n">Não</td><td>Numérico</td><td class="y">"Lembrar CPF"</td><td>não verificado</td></tr>
+    <tr><td><button type="button" onclick="go('cc-c6')">C6 Bank</button></td><td>Nenhum na web (app)</td><td>–</td><td>–</td><td>–</td><td>–</td><td>– (app)</td></tr>
+    <tr><td>Banco Pan · Itaú</td><td colspan="6" class="nv">Não verificado: as páginas de empréstimo com garantia de veículo retornaram erro 404 em 18/11/2026.</td></tr>
    </tbody></table></div>
  </div>
 </section>
 
+
 <section class="step" data-s="cc-creditas" aria-labelledby="h-cc-creditas">
- <div class="stack" style="gap:24px">
-  <div class="cc-ban"><b>Referência de mercado · Creditas (simulação)</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. <a href="https://www.creditas.com/emprestimo/garantia-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
-  <h2 class="t-title" id="h-cc-creditas" tabindex="-1">Simule um crédito com seu carro em garantia</h2>
-  <p class="t-p">Preencha com seus dados para começarmos a simulação.</p>
-  <div class="fields">
-   <div class="ci pl"><div class="box"><input inputmode="numeric" value="R$ 5.000"><label class="fl">Valor desejado</label></div><div class="help">O valor mínimo do empréstimo é de R$ 5.000,00.</div></div>
-   <div class="ci pl"><div class="box"><input placeholder="Qual é seu nome completo?"><label class="fl">Nome completo</label></div></div>
-   <div class="ci pl"><div class="box"><input type="email" placeholder="E qual é seu e-mail?"><label class="fl">E-mail</label></div></div>
-   <div class="ci pl"><div class="box"><input inputmode="numeric" maxlength="14" placeholder="Agora, informe seu CPF" oninput="maskCpf2(this)"><label class="fl">CPF</label></div></div>
+ <div class="stack" style="gap:20px">
+  <div class="cc-ban"><b>Referência de mercado · Creditas</b>Prints reais tirados em 18 e 19/11/2026, sem preencher nenhum campo. O que vem depois da primeira tela foi lido no código público do site, quando foi possível. <a href="https://www.creditas.com/emprestimo/garantia-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-creditas" tabindex="-1">Creditas</h2>
+  <p class="t-p" style="margin-top:-16px">Três telas até enviar o pedido. Pede o contato na primeira.</p>
+  <div class="cc-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-tab="print">Print real</button><button type="button" role="tab" aria-selected="false" data-tab="fluxo">Fluxo completo</button></div>
+  <div class="cc-pane stack" data-pane="print" style="gap:16px">
+   <div class="devtog" role="group" aria-label="Dispositivo"><button type="button" data-dev="d" aria-pressed="true">Computador</button><button type="button" data-dev="m" aria-pressed="false">Celular</button></div>
+   <figure class="shot"><div class="frame"><img class="img-d" src="conc/creditas-d.jpg" alt="Primeira tela do formulário, computador" loading="lazy"><img class="img-m" src="conc/creditas-m.jpg" alt="Primeira tela do formulário, celular" loading="lazy"></div><figcaption><b>Primeira tela do formulário.</b> app.creditas.com, aberto pelo botão "Simule agora" da página do produto. No celular, a imagem é a tela inteira; role dentro do quadro.</figcaption></figure>
   </div>
-  <div class="cc-gap">O print registrado termina no CPF. Campos e botão seguintes não foram lidos.</div>
+  <div class="cc-pane stack" data-pane="fluxo" style="gap:16px" hidden>
+   <ol class="flow"><li class=""><div class="ft">Informações pessoais <span class="src seen">visto no print</span></div><div class="chips"><span>Valor desejado (mínimo R$ 5.000)</span><span>Nome completo</span><span>E-mail</span><span>CPF</span></div><p>Texto de autorização de consulta ao SCR do Banco Central. Botões "Começar" e "Voltar".</p></li><li class=""><div class="ft">Etapa 1 de 2 · Análise de perfil <span class="src code">lido no código</span></div><div class="chips"><span>Data de nascimento</span><span>CEP (com "Não sei meu CEP")</span><span>Número e complemento, se preciso</span><span>Renda total mensal</span><span>Situação profissional</span><span>Para que você busca o empréstimo</span><span>Celular (contato por WhatsApp)</span></div><p>Título de etapa visível: "Etapa 1 de 2".</p></li><li class=""><div class="ft">Etapa 2 de 2 · Análise de garantia <span class="src code">lido no código</span></div><div class="chips"><span>Dono do carro (você, cônjuge, pais, filhos, irmãos, outros)</span><span>Você está pagando o carro?</span><span>Quanto falta para pagar</span><span>Placa</span><span>Sem placa: ano de fabricação, ano modelo, marca, modelo, portas</span><span>Escolha do modelo e valor (índice Molicar)</span></div><p>Aceita carro ainda financiado e carro de familiar.</p></li><li class=""><div class="ft">Pedido enviado <span class="src code">lido no código</span></div><p>Rota de sucesso existe no código; o texto da tela não foi lido.</p></li></ol>
+  </div>
+  <div class="learn"><b>O que a Porto pode aprender</b><ul><li>Contato gravado na primeira tela, antes de qualquer consulta (reforça a M2).</li><li>Mostra "Etapa 1 de 2" e "Etapa 2 de 2": a pessoa sabe quanto falta (M4).</li><li>Explica por que pede autorização de consulta ao SCR, com link para o FAQ do Banco Central.</li><li>Regra de negócio diferente: aceita carro financiado e de familiar. A Porto exige carro quitado e no nome; vale a Porto avaliar se essa restrição é a principal causa de reprovação na placa.</li></ul></div>
  </div>
 </section>
-
-<section class="step" data-s="cc-creditas-calc" aria-labelledby="h-cc-creditas-calc">
- <div class="stack" style="gap:24px">
-  <div class="cc-ban"><b>Referência de mercado · Creditas (calculadora)</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. <a href="https://www.creditas.com/emprestimo/garantia-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
-  <h2 class="t-title" id="h-cc-creditas-calc" tabindex="-1">Calculadora de crédito com o carro em garantia</h2>
-  <p class="t-p">Começa pelo CPF, como a Porto.</p>
-  <div class="ci pl"><div class="box"><input inputmode="numeric" maxlength="14" placeholder=" " oninput="maskCpf2(this)"><label class="fl">Informe seu CPF</label></div></div>
-  <div class="cc-gap">Campos e botão seguintes não foram lidos.</div>
- </div>
-</section>
-
 <section class="step" data-s="cc-santander" aria-labelledby="h-cc-santander">
- <div class="stack" style="gap:24px">
-  <div class="cc-ban"><b>Referência de mercado · Santander (via Sim)</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. O botão "Simular agora" da página do Santander leva ao cadastro da Sim, financeira do grupo. <a href="https://www.santander.com.br/usecarro" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
-  <h2 class="t-title" id="h-cc-santander" tabindex="-1">Inicie sua simulação</h2>
-  <p class="t-p">Os dados abaixo serão usados para personalizar sua oferta.</p>
-  <div class="fields">
-   <div class="ci"><div class="box"><input type="tel" maxlength="14" placeholder=" " oninput="maskCpf2(this)"><label class="fl">CPF</label></div></div>
-   <div class="ci"><div class="box"><input placeholder=" "><label class="fl">Nome completo</label></div></div>
-   <div class="ci"><div class="box"><input type="tel" placeholder=" "><label class="fl">Data de aniversário</label></div></div>
-   <div class="ci"><div class="box"><input type="tel" placeholder=" "><label class="fl">Número de celular</label></div></div>
-   <div class="ci"><div class="box"><input type="email" placeholder=" "><label class="fl">E-mail</label></div></div>
+ <div class="stack" style="gap:20px">
+  <div class="cc-ban"><b>Referência de mercado · Santander (via Sim)</b>Prints reais tirados em 18 e 19/11/2026, sem preencher nenhum campo. O que vem depois da primeira tela foi lido no código público do site, quando foi possível. <a href="https://www.santander.com.br/usecarro" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-santander" tabindex="-1">Santander (via Sim)</h2>
+  <p class="t-p" style="margin-top:-16px">O "Simular agora" do Santander leva à Sim, financeira do grupo. É uma conta digital: cadastro, senha e selfie vêm antes dos dados do carro.</p>
+  <div class="cc-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-tab="print">Print real</button><button type="button" role="tab" aria-selected="false" data-tab="fluxo">Fluxo completo</button></div>
+  <div class="cc-pane stack" data-pane="print" style="gap:16px">
+   <div class="devtog" role="group" aria-label="Dispositivo"><button type="button" data-dev="d" aria-pressed="true">Computador</button><button type="button" data-dev="m" aria-pressed="false">Celular</button></div>
+   <figure class="shot"><div class="frame"><img class="img-d" src="conc/sim-d.jpg" alt="Primeira tela (cadastro), computador" loading="lazy"><img class="img-m" src="conc/sim-m.jpg" alt="Primeira tela (cadastro), celular" loading="lazy"></div><figcaption><b>Primeira tela (cadastro).</b> emprestimosim.com.br. Computador: print do Chrome. Celular: print em 390 px.</figcaption></figure>
   </div>
-  <div class="ph-legal">[Texto de privacidade do concorrente]</div>
-  <div class="foot"><button class="btn" type="button" onclick="ccNext(this)">Continuar</button><p class="cc-msg" hidden>Protótipo: só a primeira etapa deste concorrente foi registrada.</p></div>
-  <p class="body1" style="font-size:14px;text-align:center">Já tem conta? <a href="#" onclick="return false">Entre aqui</a></p>
+  <div class="cc-pane stack" data-pane="fluxo" style="gap:16px" hidden>
+   <ol class="flow"><li class=""><div class="ft">Cadastro <span class="src seen">visto no print</span></div><div class="chips"><span>CPF</span><span>Nome completo</span><span>Data de aniversário</span><span>Número de celular</span><span>E-mail</span></div><p>Botão "Continuar" e entrada para quem já tem senha.</p></li><li class=""><div class="ft">Validar telefone <span class="src code">lido no código</span></div><div class="chips"><span>Código por SMS</span></div><p>Reenvio do código e botão de ajuda.</p></li><li class=""><div class="ft">Criar senha <span class="src code">lido no código</span></div><div class="chips"><span>Senha de 6 números</span><span>Confirmação da senha</span></div><p>Não aceita data de aniversário nem sequência.</p></li><li class=""><div class="ft">Selfie <span class="src code">lido no código</span></div><div class="chips"><span>Tutorial</span><span>Captura biométrica</span></div></li><li class=""><div class="ft">Empréstimo com garantia de carro <span class="src code">lido no código</span></div><p>Avisa que o carro precisa estar no nome e quitado antes das perguntas.</p></li><li class=""><div class="ft">Requisitos básicos do carro <span class="src code">lido no código</span></div><div class="chips"><span>Ano mínimo de fabricação</span></div></li><li class=""><div class="ft">Placa e dados do carro <span class="src code">lido no código</span></div><div class="chips"><span>Placa</span><span>Se não achar: modelo, ano modelo, ano de fabricação, UF de licenciamento</span><span>Confirmação dos dados do carro</span></div><p>Ajuda "onde encontrar o ano no CRLV".</p></li><li class=""><div class="ft">Simulação <span class="src code">lido no código</span></div><div class="chips"><span>De quanto você precisa</span><span>Parcelas</span><span>Dia de vencimento</span></div></li><li class=""><div class="ft">Dados pessoais <span class="src code">lido no código</span></div><div class="chips"><span>Nome da mãe (pede para abreviar o nome do meio)</span><span>Nome de registro</span><span>Nome social</span><span>Órgão emissor</span></div></li><li class=""><div class="ft">Dados bancários <span class="src code">lido no código</span></div><div class="chips"><span>Conta para depósito e débito</span></div></li><li class=""><div class="ft">Resumo e contrato <span class="src code">lido no código</span></div><div class="chips"><span>Valor solicitado, IOF, seguro, tarifas, registro no Detran, taxa, parcelas</span></div><p>Botão "Terminar depois".</p></li><li class=""><div class="ft">Validar telefone de novo <span class="src code">lido no código</span></div><div class="chips"><span>Código por SMS para formalizar</span></div></li><li class=""><div class="ft">Documentos e fotos <span class="src code">lido no código</span></div><div class="chips"><span>RG ou CNH</span><span>CRLV</span><span>Fotos do veículo</span><span>Fatura do banco</span></div></li><li class=""><div class="ft">Empréstimo solicitado <span class="src code">lido no código</span></div><p>Tela final com "Entenda o que acontece agora" em passos numerados: análise, depósito, carnê e gestão do contrato.</p></li></ol>
+  </div>
+  <div class="learn"><b>O que a Porto pode aprender</b><ul><li>Também pede o contato na primeira tela, junto com o CPF.</li><li>"Terminar depois" no resumo: referência direta para a M16 (continuar de onde parou).</li><li>Tela final com próximos passos numerados, como propomos na M15.</li><li>Pede para abreviar o nome do meio quando o nome da mãe não cabe: alternativa à M12 se o limite de 35 caracteres não puder subir.</li><li>A ordem das etapas é a provável, montada a partir das rotas do aplicativo.</li></ul></div>
  </div>
 </section>
-
 <section class="step" data-s="cc-bv" aria-labelledby="h-cc-bv">
- <div class="stack" style="gap:24px">
-  <div class="cc-ban"><b>Referência de mercado · BV</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. <a href="https://www.bv.com.br/emprestimos/emprestimo-com-garantia-de-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
-  <h2 class="t-title" id="h-cc-bv" tabindex="-1">Simulador de empréstimo com garantia de veículo</h2>
-  <p class="body1">Crédito de até 120% do valor do veículo, sem deixar de usar o carro, com até 72 meses para pagar.<br><b>Lembre-se: multas e impostos devem estar regularizados.</b></p>
-  <p class="t-p">Para começar, informe o seu CPF.</p>
-  <div class="ci"><div class="box"><input id="bvCpf" inputmode="numeric" maxlength="14" placeholder=" " oninput="maskCpf2(this);ccBtn(this)"><label class="fl" for="bvCpf">Digite seu CPF aqui*</label></div></div>
-  <div class="foot"><button class="btn" type="button" aria-disabled="true" onclick="ccNext(this)">Continuar</button><p class="cc-msg" hidden>Protótipo: só a primeira etapa deste concorrente foi registrada.</p><button class="btn stroke" type="button" onclick="back()">Voltar para tela inicial</button></div>
+ <div class="stack" style="gap:20px">
+  <div class="cc-ban"><b>Referência de mercado · BV</b>Prints reais tirados em 18 e 19/11/2026, sem preencher nenhum campo. O que vem depois da primeira tela foi lido no código público do site, quando foi possível. <a href="https://www.bv.com.br/emprestimos/emprestimo-com-garantia-de-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-bv" tabindex="-1">BV</h2>
+  <p class="t-p" style="margin-top:-16px">Começa só pelo CPF, com as condições do produto logo acima do campo.</p>
+  <div class="cc-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-tab="print">Print real</button><button type="button" role="tab" aria-selected="false" data-tab="fluxo">Fluxo completo</button></div>
+  <div class="cc-pane stack" data-pane="print" style="gap:16px">
+   <div class="devtog" role="group" aria-label="Dispositivo"><button type="button" data-dev="d" aria-pressed="true">Computador</button><button type="button" data-dev="m" aria-pressed="false">Celular</button></div>
+   <figure class="shot" data-only="d"><div class="frame"><img class="img-d" src="conc/bv-d.jpg" alt="Primeira tela (pré-análise), computador" loading="lazy"></div><figcaption><b>Primeira tela (pré-análise).</b> Print do Chrome no computador, com o aviso de cookies do próprio site. Não há print de celular: o BV bloqueia o navegador automatizado.</figcaption></figure><figure class="shot" data-only="d"><div class="frame"><img class="img-d" src="conc/bv-lp-d.jpg" alt="Página do produto, computador" loading="lazy"></div><figcaption><b>Página do produto.</b> Print do Chrome no computador.</figcaption></figure>
+  </div>
+  <div class="cc-pane stack" data-pane="fluxo" style="gap:16px" hidden>
+   <ol class="flow"><li class=""><div class="ft">Pré-análise: CPF <span class="src seen">visto no print</span></div><div class="chips"><span>CPF</span></div><p>Acima do campo: até 120% do valor do veículo, até 72 meses e "multas e impostos devem estar regularizados". Botão desativado até preencher e "Voltar para tela inicial".</p></li><li class="nv"><div class="ft">Etapas seguintes <span class="src nv">não verificado</span></div><p>O site do BV bloqueia leitura automatizada do código e as telas seguintes exigem CPF.</p></li></ol>
+  </div>
+  <div class="learn"><b>O que a Porto pode aprender</b><ul><li>Requisito do carro (multas e impostos em dia) antes do CPF: mesma lógica da M1.</li><li>Condições do produto ao lado do campo de CPF, no ponto em que a pessoa decide continuar.</li></ul></div>
  </div>
 </section>
-
 <section class="step" data-s="cc-serasa" aria-labelledby="h-cc-serasa">
- <div class="stack" style="gap:24px">
-  <div class="cc-ban"><b>Referência de mercado · Serasa Crédito</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. Marketplace: a simulação passa pelo login com CPF. <a href="https://www.serasa.com.br/ecred/emprestimos/emprestimo-com-garantia-de-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
-  <h2 class="t-title" id="h-cc-serasa" tabindex="-1">Digite seu CPF</h2>
-  <div class="ci pl"><div class="box"><input id="seCpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" oninput="maskCpf2(this);ccBtn(this)"><label class="fl" for="seCpf">CPF</label></div></div>
-  <div class="tog"><span>Lembrar CPF para o próximo acesso</span><i aria-hidden="true"></i></div>
-  <div class="ph-legal">[Termos de uso e política de privacidade do concorrente]</div>
-  <div class="foot"><button class="btn" type="button" aria-disabled="true" onclick="ccNext(this)">Continuar</button><p class="cc-msg" hidden>Protótipo: só a primeira etapa deste concorrente foi registrada.</p></div>
+ <div class="stack" style="gap:20px">
+  <div class="cc-ban"><b>Referência de mercado · Serasa Crédito</b>Prints reais tirados em 18 e 19/11/2026, sem preencher nenhum campo. O que vem depois da primeira tela foi lido no código público do site, quando foi possível. <a href="https://www.serasa.com.br/ecred/emprestimos/emprestimo-com-garantia-de-veiculo" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-serasa" tabindex="-1">Serasa Crédito</h2>
+  <p class="t-p" style="margin-top:-16px">Marketplace: a simulação de garantia de veículo passa pelo login da Serasa.</p>
+  <div class="cc-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-tab="print">Print real</button><button type="button" role="tab" aria-selected="false" data-tab="fluxo">Fluxo completo</button></div>
+  <div class="cc-pane stack" data-pane="print" style="gap:16px">
+   <div class="devtog" role="group" aria-label="Dispositivo"><button type="button" data-dev="d" aria-pressed="true">Computador</button><button type="button" data-dev="m" aria-pressed="false">Celular</button></div>
+   <figure class="shot"><div class="frame"><img class="img-d" src="conc/serasa-d.jpg" alt="Login com CPF, computador" loading="lazy"><img class="img-m" src="conc/serasa-m.jpg" alt="Login com CPF, celular" loading="lazy"></div><figcaption><b>Login com CPF.</b> serasa.com.br/entrar, aberto pelo botão "Simular empréstimo".</figcaption></figure>
+  </div>
+  <div class="cc-pane stack" data-pane="fluxo" style="gap:16px" hidden>
+   <ol class="flow"><li class=""><div class="ft">Login: CPF <span class="src seen">visto no print</span></div><div class="chips"><span>CPF</span><span>"Lembrar CPF para o próximo acesso" (já ligado)</span></div><p>Teclado numérico; botão desativado até o CPF estar completo.</p></li><li class="nv"><div class="ft">Senha e ofertas de parceiros <span class="src nv">não verificado</span></div><p>Depois do login, a Serasa mostra ofertas de parceiros. Exige CPF e senha.</p></li></ol>
+  </div>
+  <div class="learn"><b>O que a Porto pode aprender</b><ul><li>"Lembrar CPF" já ligado: referência para a M16.</li><li>O botão só ativa com o CPF completo, o que evita erro de envio.</li></ul></div>
  </div>
 </section>
-
 <section class="step" data-s="cc-c6" aria-labelledby="h-cc-c6">
- <div class="stack" style="gap:24px">
-  <div class="cc-ban"><b>Referência de mercado · C6 Bank</b>Primeira etapa lida em 18/11/2026, sem preencher nenhum campo. Aqui está a estrutura (ordem dos campos, textos curtos e botões) no visual neutro do protótipo, sem a identidade do concorrente. <a href="https://www.c6bank.com.br/emprestimo-com-garantia-de-veiculo/" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
-  <h2 class="t-title" id="h-cc-c6" tabindex="-1">Sem formulário na web</h2>
-  <p class="t-p">O botão "Solicitar análise" da página leva ao download do app. A simulação acontece só dentro do aplicativo.</p>
-  <div class="cc-gap">Nenhum campo na web para comparar.</div>
+ <div class="stack" style="gap:20px">
+  <div class="cc-ban"><b>Referência de mercado · C6 Bank</b>Prints reais tirados em 18 e 19/11/2026, sem preencher nenhum campo. O que vem depois da primeira tela foi lido no código público do site, quando foi possível. <a href="https://www.c6bank.com.br/emprestimo-com-garantia-de-veiculo/" target="_blank" rel="noopener noreferrer">Abrir a página original</a></div>
+  <h2 class="t-title" id="h-cc-c6" tabindex="-1">C6 Bank</h2>
+  <p class="t-p" style="margin-top:-16px">Sem formulário na web: "Solicitar análise" leva ao download do app.</p>
+  <div class="cc-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-tab="print">Print real</button><button type="button" role="tab" aria-selected="false" data-tab="fluxo">Fluxo completo</button></div>
+  <div class="cc-pane stack" data-pane="print" style="gap:16px">
+   <div class="devtog" role="group" aria-label="Dispositivo"><button type="button" data-dev="d" aria-pressed="true">Computador</button><button type="button" data-dev="m" aria-pressed="false">Celular</button></div>
+   <figure class="shot"><div class="frame"><img class="img-d" src="conc/c6-d.jpg" alt="Página do produto, computador" loading="lazy"><img class="img-m" src="conc/c6-m.jpg" alt="Página do produto, celular" loading="lazy"></div><figcaption><b>Página do produto.</b> Com o aviso de cookies do próprio site no celular.</figcaption></figure>
+  </div>
+  <div class="cc-pane stack" data-pane="fluxo" style="gap:16px" hidden>
+   <ol class="flow"><li class=""><div class="ft">Download do app <span class="src seen">visto no print</span></div><p>A simulação acontece só dentro do aplicativo.</p></li></ol>
+  </div>
+  <div class="learn"><b>O que a Porto pode aprender</b><ul><li>Vantagem da Porto: jornada inteira no navegador, sem instalar nada.</li></ul></div>
  </div>
 </section>
 
@@ -798,13 +834,17 @@ function maskCpf2(e){const d=e.value.replace(/\D/g,"").slice(0,11);e.value=d.rep
 function ccBtn(inp){const b=inp.closest(".step").querySelector(".foot .btn");b.setAttribute("aria-disabled",inp.value.replace(/\D/g,"").length===11?"false":"true")}
 function ccNext(b){if(b.getAttribute("aria-disabled")==="true")return;const m=b.parentElement.querySelector(".cc-msg");if(m)m.hidden=false}
 const NOTES_CC={
-"cc-comp":["comparativo das primeiras etapas",["Dois grupos: quem pede o contato junto com o CPF (Creditas simulação, Santander via Sim) e quem pede só o CPF (BV, Serasa, Creditas calculadora e a Porto).","Quem pede contato na primeira tela consegue trabalhar a pessoa mesmo se ela for recusada. Na Porto, a M2 antecipa o contato para a 4ª etapa sem alongar a primeira.","Nenhum concorrente mostra todos os requisitos do veículo antes do CPF; o BV mostra parte. A M1 da Porto vai além.","Só a Serasa oferece algo parecido com retomar a jornada (\"Lembrar CPF\")."]],
-"cc-creditas":["Creditas (simulação)",["Valor, nome, e-mail e CPF na mesma tela: o contato fica gravado antes da consulta de crédito.","Avisa o valor mínimo logo abaixo do campo de valor.","Rótulos em forma de pergunta (\"Qual é seu nome completo?\").","Comparado com a Porto: hoje o contato só é gravado na 7ª tela; com a M2, na 4ª."]],
-"cc-creditas-calc":["Creditas (calculadora)",["Começa só pelo CPF, como a Porto.","CPF primeiro é comum no mercado; a diferença está no que vem antes e depois dele."]],
-"cc-santander":["Santander (via Sim)",["O \"Simular agora\" do Santander leva ao cadastro da Sim, financeira do grupo.","Cinco campos na primeira tela: CPF, nome, data de aniversário, celular e e-mail.","Rótulos dentro do campo, que encolhem ao digitar.","Entrada separada para quem já tem conta (\"Entre aqui\")."]],
-"cc-bv":["BV",["Só o CPF, com teclado numérico.","Antes do campo: até 120% do valor do veículo, até 72 meses e o aviso de multas e impostos em dia. Mesma lógica da M1.","Botão \"Continuar\" desativado até o CPF estar completo (digite 11 números para ver).","Saída explícita: \"Voltar para tela inicial\"."]],
-"cc-serasa":["Serasa Crédito",["Marketplace: a simulação de garantia de veículo passa pelo login com CPF.","\"Lembrar CPF para o próximo acesso\" já vem ligado: referência para a M16 (continuar de onde parou).","Teclado numérico e botão desativado até o CPF estar completo."]],
-"cc-c6":["C6 Bank",["\"Solicitar análise\" leva ao download do app: não há formulário na web.","Vantagem da Porto: jornada inteira no navegador, sem instalar nada."]]};
+"cc-comp":["comparativo",["Creditas e Santander (via Sim) pedem o contato junto com o CPF; BV, Serasa e a Porto começam só pelo CPF.","A Creditas fecha o pedido em 3 telas; a Sim, em cerca de 14, porque abre uma conta com senha e selfie.","Ninguém mostra todos os requisitos do carro antes do CPF; o BV mostra parte. A M1 da Porto vai além.","Sim e Serasa têm formas de retomar depois (\"Terminar depois\", \"Lembrar CPF\")."]],
+"cc-creditas":["Creditas",["Print real da primeira tela e fluxo completo (3 telas) lido no código público.","Use as abas \"Print real\" e \"Fluxo completo\"."]],
+"cc-santander":["Santander (via Sim)",["Print real do cadastro e fluxo completo (cerca de 14 telas) lido no código público do aplicativo da Sim.","A ordem das etapas é a provável, a partir das rotas do aplicativo."]],
+"cc-bv":["BV",["Print real do Chrome. O BV bloqueia leitura automatizada: etapas seguintes não verificadas."]],
+"cc-serasa":["Serasa Crédito",["Print real do login. Depois dele vêm ofertas de parceiros, que exigem CPF e senha."]],
+"cc-c6":["C6 Bank",["Só a página do produto: a simulação acontece no app."]]};
+function devPadrao(){return matchMedia("(max-width:767px)").matches?"m":"d"}
+function aplicaDev(sec,dev){sec.querySelectorAll(".devtog button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.dev===dev));sec.querySelectorAll(".shot").forEach(f=>{const o=f.dataset.only;f.classList.toggle("m",(o||dev)==="m")})}
+document.addEventListener("click",e=>{const t=e.target.closest(".cc-tabs button");if(t){const sec=t.closest(".step");sec.querySelectorAll(".cc-tabs button").forEach(b=>b.setAttribute("aria-selected",b===t));sec.querySelectorAll(".cc-pane").forEach(p=>p.hidden=p.dataset.pane!==t.dataset.tab);return}
+ const d=e.target.closest(".devtog button");if(d)aplicaDev(d.closest(".step"),d.dataset.dev)});
+document.querySelectorAll('.step[data-s^="cc-"]').forEach(sec=>{const t=sec.querySelector(".devtog");if(t&&!sec.querySelector(".img-m"))t.hidden=true;aplicaDev(sec,devPadrao())});
 
 /* ===== Onde está cada melhoria ===== */
 const MEL={M1:["Requisitos antes do CPF","bv"],M2:["Dados pessoais e CEP antes dos bancários","dados"],M3:["Textos dos campos corrigidos","dados"],M4:["\"Etapa X de 6\" e tempo estimado","cpf"],M5:["Botão e texto do CPF mais claros","bv"],M6:["CPF sem oferta com saída","cpfnao"],M7:["Limite pré-aprovado visível","sim"],M8:["Campos acessíveis","cpf"],M9:["Preenchimento automático","dados"],M10:["Placa com rótulo claro","placa"],M11:["Erro próprio para cada reprovação","placa"],M12:["Nome da mãe com até 60 caracteres","dados"],M13:["Lembrete da simulação","dados"],M14:["Segurança e prova social no CPF","cpf"],M15:["Proposta enviada com próximos passos","fim"],M16:["Continuar de onde parou","bv"],M17:["Bancos mais usados no topo","banco"],M18:["Desempenho no celular","bv"]};
